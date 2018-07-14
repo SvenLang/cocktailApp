@@ -1,10 +1,10 @@
 import sqlite3
+import csv
 
-# create a new database ot connect to an existing one
-db = sqlite3.connect('drinksDB.db')
-cursor = db.cursor()
-
-# create the three tables so that the csv data can be inserted automatically
+###############################################
+# In this sections all SQL statements for
+# later use will be defined
+###############################################
 
 ###
 # Table Ingredients
@@ -39,7 +39,7 @@ sql_create_types_table = """CREATE TABLE IF NOT EXISTS types (
 ###
 # Table Groups
 # List of different categories
-# examples: shots, cocktail ,beer
+# examples: Unforgettables, New Era Drinks
 ####
 sql_create_categories_table = """CREATE TABLE IF NOT EXISTS categories (
     id integer PRIMARY KEY AUTOINCREMENT,
@@ -58,6 +58,7 @@ sql_create_cocktail_table = """CREATE TABLE IF NOT EXISTS cocktails (
     isAlcoholic integer NOT NULL,
     thumbnail text,
     rating integer,
+    instruction text NOT NULL,
     category_id integer,
     glass_id integer,
     type_id integer,
@@ -72,7 +73,7 @@ sql_create_cocktail_table = """CREATE TABLE IF NOT EXISTS cocktails (
 # is used to break that.
 # In addition, each ingredient also has a a measure
 ####
-sql_create_recipe_table = """CREATE TABLE IF NOT EXISTS recipies (
+sql_create_recipe_table = """CREATE TABLE IF NOT EXISTS recipes (
     id integer PRIMARY KEY AUTOINCREMENT,
     cocktail_id integer NOT NULL,
     ingredient_id integer NOT NULL,
@@ -81,12 +82,134 @@ sql_create_recipe_table = """CREATE TABLE IF NOT EXISTS recipies (
     FOREIGN KEY (ingredient_id) REFERENCES ingredients (id)
 );"""
 
-cursor.execute(sql_create_ingredients_table)
-cursor.execute(sql_create_glasses_table)
-cursor.execute(sql_create_types_table)
-cursor.execute(sql_create_categories_table)
-cursor.execute(sql_create_cocktail_table)
-cursor.execute(sql_create_recipe_table)
+
+sql_query_for_glass_id = """SELECT id from glasses where type = ?"""
+sql_insert_new_glass = """INSERT INTO glasses(type) VALUES (?)"""
+sql_query_for_type_id = """SELECT id from types where name = ?"""
+sql_insert_new_type = """INSERT INTO types(name) VALUES (?)"""
+sql_query_for_category_id = """SELECT id from categories where name = ?"""
+sql_insert_new_category = """INSERT INTO categories(name) VALUES (?)"""
+sql_query_for_ingredient_id = """SELECT id from ingredients where name = ?"""
+sql_insert_new_ingredient = """INSERT INTO ingredients(name) VALUES (?)"""
+sql_insert_new_recipe_part = """INSERT INTO recipes(cocktail_id, ingredient_id, measure) VALUES(?,?,?)"""
+sql_insert_new_cocktail = """INSERT INTO cocktails(name, isAlcoholic, thumbnail, rating, instruction, category_id, glass_id, type_id) VALUES(?,?,?,?,?,?,?,?)"""
+
+###############################################
+# In this sections all functions get declared
+###############################################
+
+
+def create_db_tables(db):
+    """
+    Create all required tables for the drinksDB
+
+    :param db:  The database handle to create a cursor on
+    """
+    c = db.cursor()
+    c.execute(sql_create_ingredients_table)
+    c.execute(sql_create_glasses_table)
+    c.execute(sql_create_types_table)
+    c.execute(sql_create_categories_table)
+    c.execute(sql_create_cocktail_table)
+    c.execute(sql_create_recipe_table)
+
+
+def insert_new_if_not_present(db, select_query, insert_query, item):
+    """
+    Insert items that should be unique. 
+    If they already exist, the existing ID wil be returned
+
+    :param db:              The database handle to create a cursor on
+    :param select_query:    SQL-query to search if the item already exists
+    :param insert_query:    SQL-query to add an unknown item to the database
+    :param item:            data to insert into the database
+    :returns:               The id of the item, either newly created or already existent
+    """
+    item_id = None
+
+    # perform the database operations
+    c = db.cursor()
+    c.execute(select_query, item)
+    item_id = c.fetchone()
+    if item_id is None:
+        # the item has not been found
+        c.execute(insert_query, item)
+        item_id = c.lastrowid
+
+    return item_id
+
+
+def insert_new_cocktail(db, row, glass_id, types_id, category_id):
+    """
+    Store the basic componenets of a cocktail, however the ingredients are not yet mapped
+
+    :param db:          The database handle to create a cursor on
+    :param row:         Whole input from the CSV file
+    :param glass_id:    The ID of the glass of the cocktail
+    :param types_id:    The ID of the cocktail type like Shots or Beer
+    :param category_id: The ID of a category like Unforgettables (can be None)
+    :returns:           The ID of the newly created cocktail
+    """
+    c = db.cursor()
+
+    isAlcoholic = 0
+    if row[4] == "Alcoholic":
+        isAlcoholic = 1
+    if category_id is None:
+        category_id = "NULL"
+
+    c.execute(sql_insert_new_cocktail,
+              row[1], isAlcoholic, row[6], 0, row[24], category_id, glass_id, types_id)
+    return c.lastrowid
+
+
+def insert_and_map_ingredients(db, cocktail_id, row):
+    """
+
+    """
+    #
+    # row[9] is the first ingredient
+    row[9]
+
+
+def parse_csv_row(db, row):
+    """
+
+    """
+    # these values are always present
+    glass_id = insert_new_if_not_present(
+        db, sql_query_for_glass_id, sql_insert_new_glass, row[7])
+    types_id = insert_new_if_not_present(
+        db, sql_query_for_type_id, sql_insert_new_type, row[5])
+
+    # these values might be present
+    category_id = None
+    if row[8] != "":
+        category_id = insert_new_if_not_present(
+            db, sql_query_for_category_id, sql_insert_new_category, row[8])
+
+    # store the cocktail
+    cocktail_id = insert_new_cocktail(db, row, glass_id, types_id, category_id)
+
+
+# create a new database or connect to an existing one
+db = sqlite3.connect('drinksDB.db')
+cursor = db.cursor()
+
+
+with open('./all_drinks.csv') as csvfile:
+    readCSV = csv.reader(csvfile, delimiter=',')
+    for row in readCSV:
+        # find the individual items and print them in groups
+
+        # find the glass
+        print(row)
+
+        # find the category
+
+        # find the type
+
+        # set the cocktail items
 
 # close the databse connection
 db.close()
