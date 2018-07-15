@@ -149,6 +149,9 @@ def insert_new_if_not_present(db, select_query, insert_query, item):
         # the item has not been found
         c.execute(insert_query, (item,))
         item_id = c.lastrowid
+    else:
+        # the return value of fetchone is still a tuple
+        item_id = item_id[0]
 
     return item_id
 
@@ -193,10 +196,11 @@ def insert_and_map_ingredients(db, cocktail_id, row):
     # row[25] - row[39] are measurements
     for x in range(ROW_INDEX_INGREDIENT_BEGIN, ROW_INDEX_INGREDIENT_END):
         if row[x] is not "":
-            print("x is: %s, ingredient is: %s, measurement is: %s" %
-                  (x, row[x], row[x+MEASUREMENT_STEP]))
+            print("x is: %s, ingredient is: %s, measurement is: %s, cocktail_id is %d" %
+                  (x, row[x], row[x+MEASUREMENT_STEP], cocktail_id))
             ingredient_id = insert_new_if_not_present(
                 db, sql_query_for_ingredient_id, sql_insert_new_ingredient, row[x])
+            print("Ingredient id of %s is %s" % (row[x], ingredient_id))
             c.execute(sql_insert_new_recipe_part,
                       (cocktail_id, ingredient_id, row[x+MEASUREMENT_STEP],))
 
