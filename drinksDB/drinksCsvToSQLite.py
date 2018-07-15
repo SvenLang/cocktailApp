@@ -94,6 +94,19 @@ sql_insert_new_ingredient = """INSERT INTO ingredients(name) VALUES (?)"""
 sql_insert_new_recipe_part = """INSERT INTO recipes(cocktail_id, ingredient_id, measure) VALUES(?,?,?)"""
 sql_insert_new_cocktail = """INSERT INTO cocktails(name, isAlcoholic, thumbnail, rating, instruction, category_id, glass_id, type_id) VALUES(?,?,?,?,?,?,?,?)"""
 
+DEFAULT_RATING = 0
+ROW_INDEX_COCKTAIL_NAME = 1
+ROW_INDEX_ALCOHOLIC = 4
+ROW_INDEX_TYPES = 5
+ROW_INDEX_THUMBNAIL = 6
+ROW_INDEX_GLASSES = 7
+ROW_INDEX_CATEGORIES = 8
+ROW_INDEX_INSTRUCTIONS = 24
+ROW_INDEX_INGREDIENT_BEGIN = 9
+ROW_INDEX_INGREDIENT_END = 24
+MEASUREMENT_STEP = 16
+
+
 ###############################################
 # In this sections all functions get declared
 ###############################################
@@ -154,13 +167,13 @@ def insert_new_cocktail(db, row, glass_id, types_id, category_id):
     c = db.cursor()
 
     isAlcoholic = 0
-    if row[4] == "Alcoholic":
+    if row[ROW_INDEX_ALCOHOLIC] == "Alcoholic":
         isAlcoholic = 1
     if category_id is None:
         category_id = "NULL"
 
     c.execute(sql_insert_new_cocktail,
-              (row[1], isAlcoholic, row[6], 0, row[24], category_id, glass_id, types_id,))
+              (row[ROW_INDEX_COCKTAIL_NAME], isAlcoholic, row[ROW_INDEX_THUMBNAIL], DEFAULT_RATING, row[ROW_INDEX_INSTRUCTIONS], category_id, glass_id, types_id,))
     return c.lastrowid
 
 
@@ -178,15 +191,14 @@ def insert_and_map_ingredients(db, cocktail_id, row):
     # row[9] is the first ingredient, row[23] the last
     # row[24] are the instructions
     # row[25] - row[39] are measurements
-    for x in range(9, 24):
+    for x in range(ROW_INDEX_INGREDIENT_BEGIN, ROW_INDEX_INGREDIENT_END):
         if row[x] is not "":
             print("x is: %s, ingredient is: %s, measurement is: %s" %
-                  (x, row[x], row[x+16]))
+                  (x, row[x], row[x+MEASUREMENT_STEP]))
             ingredient_id = insert_new_if_not_present(
                 db, sql_query_for_ingredient_id, sql_insert_new_ingredient, row[x])
-            measure = row[x+16]
             c.execute(sql_insert_new_recipe_part,
-                      (cocktail_id, ingredient_id, measure,))
+                      (cocktail_id, ingredient_id, row[x+MEASUREMENT_STEP],))
 
 
 def parse_csv_row(db, row):
@@ -198,15 +210,15 @@ def parse_csv_row(db, row):
     """
     # these values are always present
     glass_id = insert_new_if_not_present(
-        db, sql_query_for_glass_id, sql_insert_new_glass, row[7])
+        db, sql_query_for_glass_id, sql_insert_new_glass, row[ROW_INDEX_GLASSES])
     types_id = insert_new_if_not_present(
-        db, sql_query_for_type_id, sql_insert_new_type, row[5])
+        db, sql_query_for_type_id, sql_insert_new_type, row[ROW_INDEX_TYPES])
 
     # these values might be present
     category_id = None
-    if row[8] is not "":
+    if row[ROW_INDEX_CATEGORIES] is not "":
         category_id = insert_new_if_not_present(
-            db, sql_query_for_category_id, sql_insert_new_category, row[8])
+            db, sql_query_for_category_id, sql_insert_new_category, row[ROW_INDEX_CATEGORIES])
 
     # store the cocktail
     cocktail_id = insert_new_cocktail(db, row, glass_id, types_id, category_id)
