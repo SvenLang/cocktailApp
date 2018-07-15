@@ -125,15 +125,16 @@ def insert_new_if_not_present(db, select_query, insert_query, item):
     :param item:            data to insert into the database
     :returns:               The id of the item, either newly created or already existent
     """
+
     item_id = None
 
     # perform the database operations
     c = db.cursor()
-    c.execute(select_query, item)
+    c.execute(select_query, (item,))
     item_id = c.fetchone()
     if item_id is None:
         # the item has not been found
-        c.execute(insert_query, item)
+        c.execute(insert_query, (item,))
         item_id = c.lastrowid
 
     return item_id
@@ -159,22 +160,41 @@ def insert_new_cocktail(db, row, glass_id, types_id, category_id):
         category_id = "NULL"
 
     c.execute(sql_insert_new_cocktail,
-              row[1], isAlcoholic, row[6], 0, row[24], category_id, glass_id, types_id)
+              (row[1], isAlcoholic, row[6], 0, row[24], category_id, glass_id, types_id,))
     return c.lastrowid
 
 
 def insert_and_map_ingredients(db, cocktail_id, row):
     """
+    Parses the ingredients for the cocktail.
+    After inserting the ingredient into the tables, it will also create a recipe for the cocktails itself
 
+    :param db:          The database handle to create a cursor on
+    :param cocktail_id: The ID of the cocktial, for which the ingredients should be parsed
+    :param row:         read line from the CSV file
     """
-    #
-    # row[9] is the first ingredient
-    row[9]
+    c = db.cursor()
+
+    # row[9] is the first ingredient, row[23] the last
+    # row[24] are the instructions
+    # row[25] - row[39] are measurements
+    for x in range(9, 24):
+        if row[x] is not "":
+            print("x is: %s, ingredient is: %s, measurement is: %s" %
+                  (x, row[x], row[x+16]))
+            ingredient_id = insert_new_if_not_present(
+                db, sql_query_for_ingredient_id, sql_insert_new_ingredient, row[x])
+            measure = row[x+16]
+            c.execute(sql_insert_new_recipe_part,
+                      (cocktail_id, ingredient_id, measure,))
 
 
 def parse_csv_row(db, row):
     """
+    Parses a row from the CSV file and stores the cocktail in the SQLite DB
 
+    :param db:  The database handle to create a cursor on
+    :param row: The line that was read from the CSV file
     """
     # these values are always present
     glass_id = insert_new_if_not_present(
@@ -184,32 +204,33 @@ def parse_csv_row(db, row):
 
     # these values might be present
     category_id = None
-    if row[8] != "":
+    if row[8] is not "":
         category_id = insert_new_if_not_present(
             db, sql_query_for_category_id, sql_insert_new_category, row[8])
 
     # store the cocktail
     cocktail_id = insert_new_cocktail(db, row, glass_id, types_id, category_id)
 
+    # after the cocktail_id is known, the ingredients can be stored and mapped
+    insert_and_map_ingredients(db, cocktail_id, row)
+
+
 
 # create a new database or connect to an existing one
 db = sqlite3.connect('drinksDB.db')
-cursor = db.cursor()
+create_db_tables(db)
 
 
 with open('./all_drinks.csv') as csvfile:
     readCSV = csv.reader(csvfile, delimiter=',')
+    i = 0
     for row in readCSV:
-        # find the individual items and print them in groups
-
-        # find the glass
+        # skip the first line
+        i = i+1
+        if i is 1:
+            continue
         print(row)
-
-        # find the category
-
-        # find the type
-
-        # set the cocktail items
+        parse_csv_row(db, row)
 
 # close the databse connection
 db.close()
