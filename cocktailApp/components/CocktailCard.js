@@ -9,17 +9,21 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import { Card, Button, Icon } from "react-native-elements";
+import { Card, Button, Rating } from "react-native-elements";
 
 export default class CocktailCard extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  ratingCompleted(rating) {
+    console.log(rating);
+  }
+
   render() {
     //If no Cocktail was defined from CocktailList.js then the CocktailCard shows nothing.
     //This situation occurs when the app starts.
     if (this.props.cocktailToShow === undefined) {
-      console.log("undefiend");
       return null;
     }
     return (
@@ -31,8 +35,26 @@ export default class CocktailCard extends React.Component {
           animationType={"fade"}
         >
           <Card title={this.props.cocktailToShow.name}>
+            <Rating
+              showRating
+              type="star"
+              fractions={0}
+              startingValue={this.props.cocktailToShow.rating}
+              imageSize={20}
+              onFinishRating={this.ratingCompleted}
+              style={{
+                paddingVertical: 0,
+                alignItems: "center",
+                marginBottom: 10
+              }}
+            />
             <Image
-              style={{ width: 200, height: 200, alignSelf: "center" }}
+              style={{
+                width: 200,
+                height: 200,
+                alignSelf: "center",
+                marginBottom: 10
+              }}
               source={{
                 uri: this.props.cocktailToShow.drinkThumb
               }}
@@ -54,7 +76,7 @@ export default class CocktailCard extends React.Component {
             <Button
               icon={{
                 name: "close",
-                size: 30,
+                size: 20,
                 color: "black"
               }}
               buttonStyle={styles.buttonCloseStyle}

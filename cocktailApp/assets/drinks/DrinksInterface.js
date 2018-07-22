@@ -12,7 +12,6 @@ export const contains = ({ name, category }, searchQuery) => {
 };
 
 export const getDrinks = (limit = 20, searchQuery = "") => {
-  console.log("API called " + searchQuery);
   return new Promise((resolve, reject) => {
     if (searchQuery.length === 0) {
       resolve(_.take(allDrinks, limit));
@@ -24,5 +23,7 @@ export const getDrinks = (limit = 20, searchQuery = "") => {
     }
   });
 };
+
+export const writeRating = drink => {};
 
 export default getDrinks;
