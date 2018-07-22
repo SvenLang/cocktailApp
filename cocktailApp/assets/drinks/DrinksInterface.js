@@ -2,7 +2,10 @@ import _ from "lodash";
 import allDrinks from "./allDrinks";
 
 export const contains = ({ name, category }, searchQuery) => {
-  if (name.includes(searchQuery)) {
+  let nameLC = name.toLowerCase();
+  categoryLC = category.toLowerCase();
+  searchQuery = searchQuery.toLowerCase();
+  if (nameLC.includes(searchQuery) || categoryLC.includes(searchQuery)) {
     return true;
   }
   return false;

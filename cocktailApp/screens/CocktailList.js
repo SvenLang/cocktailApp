@@ -79,7 +79,7 @@ export default class CocktailList extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <CocktailCard
           visible={this.state.showCocktailCardModalVisible}
           onRequestClose={() =>
@@ -101,6 +101,7 @@ export default class CocktailList extends React.Component {
             )}
             keyExtractor={item => item.key.toString()}
             ListHeaderComponent={this.flatListHeaderComponent}
+            stickyHeaderIndices={[0]} //For a fixed Searchbar Header
             ListFooterComponent={this.flatListFooterComponent}
           />
         </List>
@@ -112,6 +113,6 @@ export default class CocktailList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "lightgray"
+    backgroundColor: "#fff"
   }
 });

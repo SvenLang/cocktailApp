@@ -10,7 +10,6 @@ import TabBarIcon from "../components/TabBarIcon";
 import CocktailList from "../screens/CocktailList";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-
 /*
 const HomeStack = createStackNavigator({
   Home: HomeScreen
@@ -30,7 +29,6 @@ HomeStack.navigationOptions = {
   )
 };
 */
-
 const CocktailStack = createStackNavigator({
   Coktails: CocktailList
 });
@@ -43,7 +41,7 @@ CocktailStack.navigationOptions = {
       name={
         Platform.OS === "ios"
           ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-list"
+          : "md-glasses"
       }
     />
   )
