@@ -8,20 +8,17 @@ const db = SQLite.openDatabase('../assets/drinks/drinksDB.db');
 export default class RandomCocktail extends Component {
 	// define initial variables that are required
 	state = {
-		text: null,
+		text: 'This is some default context',
 		displayCocktail: false,
 	};
 
 	getRandomCocktail() {
-		let row_id = 0;
-
 		//get a random cocktail ID "SELECT id FROM cocktails ORDER BY RANDOM() LIMIT 1;
 		db.transaction(tx => {
 			tx.executeSQL(
-				'SELECT id FROM cocktails ORDER BY RANDOM() LIMIT 1;', //sql statement
-				null, // parameters
-				(_, { rows: { _array } }) => this.setState({ text: { _array } }),
-				() => this.setState({ text: 'Something went wrong' })
+				`SELECT * FROM cocktails ORDER BY RANDOM() LIMIT 1;`, //sql statement
+				[], // parameters
+				(_, { rows: { _array } }) => this.setState({ text: { _array } })
 			);
 		});
 		this.setState({ displayCocktail: true });

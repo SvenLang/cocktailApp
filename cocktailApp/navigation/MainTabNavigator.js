@@ -104,8 +104,6 @@ const CocktailDrawer = createDrawerNavigator(
 	}
 );
 
-AppRegistry.registerComponent('app', () => CocktailDrawer);
-
 export default createBottomTabNavigator({
 	//HomeStack,
 	CocktailStack,
