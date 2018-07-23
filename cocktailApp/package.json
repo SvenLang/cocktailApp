@@ -1,15 +1,12 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
-<<<<<<< HEAD
   "devDependencies": {
     "jest-expo": "~27.0.0",
     "react-native-scripts": "^1.14.0",
     "react-test-renderer": "16.3.1"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
-=======
->>>>>>> 5785c4d320fcd9a8f6ae58c8111e0e5d2b89d68e
   "scripts": {
     "test": "node ./node_modules/jest/bin/jest.js --watchAll",
     "start": "react-native-scripts start",
