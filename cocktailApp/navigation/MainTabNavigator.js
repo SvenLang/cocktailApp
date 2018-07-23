@@ -8,6 +8,7 @@ import {
 import TabBarIcon from "../components/TabBarIcon";
 //import HomeScreen from "../screens/HomeScreen";
 import CocktailList from "../screens/CocktailList";
+import FavoriteList from "../screens/FavoriteList";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
@@ -44,6 +45,24 @@ CocktailStack.navigationOptions = {
         Platform.OS === "ios"
           ? `ios-information-circle${focused ? "" : "-outline"}`
           : "md-list"
+      }
+    />
+  )
+};
+
+const FavoriteCocktailStack = createStackNavigator({
+  FavoriteCocktails: FavoriteList
+});
+
+FavoriteCocktailStack.navigationOptions = {
+  tabBarLabel: "Fav Cocktails",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-information-circle${focused ? "" : "-outline"}`
+          : "md-star"
       }
     />
   )
@@ -88,6 +107,7 @@ SettingsStack.navigationOptions = {
 export default createBottomTabNavigator({
   //HomeStack,
   CocktailStack,
+  FavoriteCocktailStack,
   LinksStack,
   SettingsStack
 });
