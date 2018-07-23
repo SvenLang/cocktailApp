@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import { Card, Button, Rating } from "react-native-elements";
+import { Card, Button, Rating, ListItem } from "react-native-elements";
 
 export default class CocktailCard extends React.Component {
   constructor(props) {
@@ -50,8 +50,8 @@ export default class CocktailCard extends React.Component {
             />
             <Image
               style={{
-                width: 200,
-                height: 200,
+                width: 180,
+                height: 180,
                 alignSelf: "center",
                 marginBottom: 10
               }}
@@ -59,29 +59,27 @@ export default class CocktailCard extends React.Component {
                 uri: this.props.cocktailToShow.drinkThumb
               }}
             />
-            <Text>Kategorie: {this.props.cocktailToShow.category} </Text>
-            <Text>Glas: {this.props.cocktailToShow.glass} </Text>
-            <Text>Zutaten:</Text>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text>Category: {this.props.cocktailToShow.category} </Text>
+              <Text>Glass: {this.props.cocktailToShow.glass} </Text>
+            </View>
+            <Text>Ingredients:</Text>
             <FlatList
               data={this.props.cocktailToShow.ingredients}
               renderItem={({ item }) => (
-                <Text>
-                  {item.ingredient} {item.measure}
-                </Text>
+                <ListItem
+                  title={item.ingredient}
+                  rightTitle={item.measure}
+                  titleStyle={{ fontSize: 12 }}
+                  rightTitleStyle={{ fontSize: 12 }}
+                />
               )}
               keyExtractor={item => item.ingredient}
             />
-            <Text>Zubereitung:</Text>
+            <Text>Instructions:</Text>
             <Text>{this.props.cocktailToShow.instructions}</Text>
-            <Button
-              icon={{
-                name: "close",
-                size: 20,
-                color: "black"
-              }}
-              buttonStyle={styles.buttonCloseStyle}
-              onPress={this.props.onRequestClose}
-            />
           </Card>
         </Modal>
       </View>
