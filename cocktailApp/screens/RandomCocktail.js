@@ -4,6 +4,7 @@ import { StyleSheet, Button, View, Text } from 'react-native';
 import CocktailCard from '../components/CocktailCard';
 
 //database usage example!
+// https://github.com/expo/test-suite/blob/master/tests/SQLite.js
 
 //The database needs to be downloaded first, otherwise a new empty database is created!
 FS.downloadAsync(
