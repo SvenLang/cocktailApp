@@ -1,15 +1,14 @@
-import React from "react";
-import { Platform } from "react-native";
-import {
-  createStackNavigator,
-  createBottomTabNavigator
-} from "react-navigation";
+import React from 'react';
+import { Platform, AppRegistry } from 'react-native';
+import { createStackNavigator, createDrawerNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import TabBarIcon from "../components/TabBarIcon";
+import TabBarIcon from '../components/TabBarIcon';
 //import HomeScreen from "../screens/HomeScreen";
-import CocktailList from "../screens/CocktailList";
-import LinksScreen from "../screens/LinksScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import CocktailList from '../screens/CocktailList';
+import LinksScreen from '../screens/LinksScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import RandomCocktail from '../screens/RandomCocktail';
+
 /*
 const HomeStack = createStackNavigator({
   Home: HomeScreen
@@ -30,7 +29,7 @@ HomeStack.navigationOptions = {
 };
 */
 const CocktailStack = createStackNavigator({
-  Coktails: CocktailList
+	Cocktails: CocktailList,
 });
 
 CocktailStack.navigationOptions = {
@@ -44,8 +43,25 @@ CocktailStack.navigationOptions = {
   )
 };
 
+const RandomCocktailStack = createStackNavigator({
+	Random: RandomCocktail,
+});
+
+RandomCocktailStack.navigationOptions = {
+	tabBarLabel: 'Random',
+	tabBarIcon: ({ focused }) => (
+		<TabBarIcon
+			focused={focused}
+			name={
+        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "random"
+      }
+      type="font-awesome"
+		/>
+	),
+};
+
 const LinksStack = createStackNavigator({
-  Links: LinksScreen
+	Links: LinksScreen,
 });
 
 LinksStack.navigationOptions = {
@@ -62,7 +78,7 @@ LinksStack.navigationOptions = {
 };
 
 const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen
+	Settings: SettingsScreen,
 });
 
 SettingsStack.navigationOptions = {
@@ -80,9 +96,29 @@ SettingsStack.navigationOptions = {
   )
 };
 
+const CocktailDrawer = createDrawerNavigator(
+	{
+		AllCocktails: {
+			path: '/',
+			screen: CocktailStack,
+		},
+		RandCocktail: {
+			path: '/',
+			screen: RandomCocktailStack,
+		},
+	},
+	{
+		initialRouteName: 'AllCocktails',
+		contentOptions: {
+			activeTintColor: '#e91e63',
+		},
+	}
+);
+
 export default createBottomTabNavigator({
-  //HomeStack,
-  CocktailStack,
-  LinksStack,
-  SettingsStack
+	//HomeStack,
+	CocktailStack,
+	LinksStack,
+	SettingsStack,
+	RandomCocktailStack,
 });
