@@ -38,11 +38,8 @@ CocktailStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={
-        Platform.OS === "ios"
-          ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-glasses"
-      }
+      name="glass-tulip"
+      type="material-community"
     />
   )
 };
@@ -57,10 +54,9 @@ LinksStack.navigationOptions = {
     <TabBarIcon
       focused={focused}
       name={
-        Platform.OS === "ios"
-          ? `ios-link${focused ? "" : "-outline"}`
-          : "md-link"
+        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "link"
       }
+      type="entypo"
     />
   )
 };
@@ -79,6 +75,7 @@ SettingsStack.navigationOptions = {
           ? `ios-options${focused ? "" : "-outline"}`
           : "md-options"
       }
+      type="ionicon"
     />
   )
 };

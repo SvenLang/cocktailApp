@@ -35,7 +35,7 @@ export default class CocktailList extends React.Component {
         this.setState({ loading: false, allDrinks: drinks });
       })
       .catch(error => {
-        this.setState({ error, loading: false });
+        this.setState({ error: error, loading: false });
       });
   };
 
@@ -72,7 +72,7 @@ export default class CocktailList extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <CocktailCard
           visible={this.state.showCocktailCardModalVisible}
           onRequestClose={() =>
