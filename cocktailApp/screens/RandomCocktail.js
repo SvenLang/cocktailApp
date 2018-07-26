@@ -16,7 +16,8 @@ const db = SQLite.openDatabase('drinksDB.db');
 export default class RandomCocktail extends Component {
 	// define initial variables that are required
 	state = {
-		text: 'This is some default context',
+		//this needs to be undefined, otherwise the CocktailCard will be loaded instantly!
+		selectedCocktail: undefined,
 		visible: false,
 	};
 
@@ -24,15 +25,16 @@ export default class RandomCocktail extends Component {
 		return new Promise((resolve, reject) => {
 			db.transaction(tx => {
 				tx.executeSql(
-					`SELECT c.id, c.name, c.thumbnail, c.instruction, t.name as type, g.type as glass from (SELECT * from cocktails ORDER BY RANDOM() LIMIT 1) c LEFT JOIN types t ON t.id = c.type_id LEFT JOIN glasses g ON g.id = c.glass_id;`,
+					`SELECT c.id, c.name, c.rating, c.thumbnail, c.instruction, t.name as type, g.type as glass from (SELECT * from cocktails ORDER BY RANDOM() LIMIT 1) c LEFT JOIN types t ON t.id = c.type_id LEFT JOIN glasses g ON g.id = c.glass_id;`,
 					[],
 					(tx, results) => {
 						cocktail.id = results.rows._array[0].id;
 						cocktail.name = results.rows._array[0].name;
 						cocktail.glass = results.rows._array[0].glass;
-						cocktail.type = results.rows._array[0].type;
-						cocktail.thumbnail = results.rows._array[0].thumbnail;
-						cocktail.instruction = results.rows._array[0].instruction;
+						cocktail.rating = results.rows._array[0].rating;
+						cocktail.category = results.rows._array[0].type;
+						cocktail.drinkThumb = results.rows._array[0].thumbnail;
+						cocktail.instructions = results.rows._array[0].instruction;
 						resolve(cocktail);
 					},
 					(tx, error) => {
@@ -68,9 +70,10 @@ export default class RandomCocktail extends Component {
 			id: null,
 			name: null,
 			glass: null,
-			type: null,
-			thumbnail: null,
-			instruction: null,
+			rating: 0,
+			category: null,
+			drinkThumb: null,
+			instructions: null,
 			ingredients: [],
 		};
 
@@ -78,14 +81,17 @@ export default class RandomCocktail extends Component {
 			.then(cocktail => {
 				this.fillCocktailWithIngredients(cocktail)
 					.then(cocktail => {
-						this.setState({ text: JSON.stringify(cocktail), visible: true });
+						console.log(cocktail);
+						this.setState({ visible: true, selectedCocktail: cocktail });
 					})
 					.catch(error => {
 						console.log(error);
+						this.setState({visible: false});
 					});
 			})
 			.catch(error => {
 				console.log(error);
+				this.setState({visible: false});
 			});
 	}
 
@@ -96,10 +102,8 @@ export default class RandomCocktail extends Component {
 			<View>
 				<Button title="New Random Cocktail" onPress={() => this.getRandomCocktail()} />
 				<Text>This is a Random Cocktail:</Text>
-				<Text>{this.state.text}</Text>
-
-				<CocktailCard visible={true} name={this.state.text.name} glass={this.state.text.glass} pic={this.state.text.thumbnail} category={this.state.text.type} instructions={this.state.text.instructions} ingredients={this.state.text.ingredients} />
-
+				<Text>{JSON.stringify(this.state.selectedCocktail)}</Text>
+				<CocktailCard visible={this.state.visible} cocktailToShow={this.state.selectedCocktail} onRequestClose={() => this.setState({ visible: false }) }/>
 			</View>
 		);
 	}
