@@ -11,7 +11,6 @@ import CocktailList from "../screens/CocktailList";
 import FavoriteList from "../screens/FavoriteList";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-
 /*
 const HomeStack = createStackNavigator({
   Home: HomeScreen
@@ -31,7 +30,6 @@ HomeStack.navigationOptions = {
   )
 };
 */
-
 const CocktailStack = createStackNavigator({
   Coktails: CocktailList
 });
@@ -41,11 +39,8 @@ CocktailStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={
-        Platform.OS === "ios"
-          ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-list"
-      }
+      name="glass-tulip"
+      type="material-community"
     />
   )
 };
@@ -78,10 +73,9 @@ LinksStack.navigationOptions = {
     <TabBarIcon
       focused={focused}
       name={
-        Platform.OS === "ios"
-          ? `ios-link${focused ? "" : "-outline"}`
-          : "md-link"
+        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "link"
       }
+      type="entypo"
     />
   )
 };
@@ -100,6 +94,7 @@ SettingsStack.navigationOptions = {
           ? `ios-options${focused ? "" : "-outline"}`
           : "md-options"
       }
+      type="ionicon"
     />
   )
 };
