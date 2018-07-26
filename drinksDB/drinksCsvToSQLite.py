@@ -177,6 +177,7 @@ def insert_new_cocktail(db, row, glass_id, types_id, category_id):
 
     c.execute(sql_insert_new_cocktail,
               (row[ROW_INDEX_COCKTAIL_NAME], isAlcoholic, row[ROW_INDEX_THUMBNAIL], DEFAULT_RATING, row[ROW_INDEX_INSTRUCTIONS], category_id, glass_id, types_id,))
+
     return c.lastrowid
 
 
@@ -247,6 +248,9 @@ with open('./all_drinks.csv') as csvfile:
             continue
         print(row)
         parse_csv_row(db, row)
+
+# save the changes
+db.commit()
 
 # close the databse connection
 db.close()
