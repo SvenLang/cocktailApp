@@ -28,19 +28,19 @@ HomeStack.navigationOptions = {
   )
 };
 */
-
 const CocktailStack = createStackNavigator({
 	Cocktails: CocktailList,
 });
 
 CocktailStack.navigationOptions = {
-	tabBarLabel: 'Cocktails',
-	tabBarIcon: ({ focused }) => (
-		<TabBarIcon
-			focused={focused}
-			name={Platform.OS === 'ios' ? `ios-information-circle${focused ? '' : '-outline'}` : 'md-list'}
-		/>
-	),
+  tabBarLabel: "Cocktails",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name="glass-tulip"
+      type="material-community"
+    />
+  )
 };
 
 const RandomCocktailStack = createStackNavigator({
@@ -52,7 +52,10 @@ RandomCocktailStack.navigationOptions = {
 	tabBarIcon: ({ focused }) => (
 		<TabBarIcon
 			focused={focused}
-			name={Platform.OS === 'ios' ? `ios-information-circle${focused ? '' : '-outline'}` : 'md-list'}
+			name={
+        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "random"
+      }
+      type="font-awesome"
 		/>
 	),
 };
@@ -62,13 +65,16 @@ const LinksStack = createStackNavigator({
 });
 
 LinksStack.navigationOptions = {
-	tabBarLabel: 'Links',
-	tabBarIcon: ({ focused }) => (
-		<TabBarIcon
-			focused={focused}
-			name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
-		/>
-	),
+  tabBarLabel: "Links",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "link"
+      }
+      type="entypo"
+    />
+  )
 };
 
 const SettingsStack = createStackNavigator({
@@ -76,13 +82,18 @@ const SettingsStack = createStackNavigator({
 });
 
 SettingsStack.navigationOptions = {
-	tabBarLabel: 'Settings',
-	tabBarIcon: ({ focused }) => (
-		<TabBarIcon
-			focused={focused}
-			name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
-		/>
-	),
+  tabBarLabel: "Settings",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-options${focused ? "" : "-outline"}`
+          : "md-options"
+      }
+      type="ionicon"
+    />
+  )
 };
 
 const CocktailDrawer = createDrawerNavigator(
