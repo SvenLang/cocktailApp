@@ -1,15 +1,17 @@
 import React from "react";
-import {
-  Platform,
-  StyleSheet,
-  View,
-  FlatList,
-  ActivityIndicator
-} from "react-native";
+import { StyleSheet, View, FlatList, ActivityIndicator } from "react-native";
 
-import { List, ListItem, SearchBar } from "react-native-elements";
+import {
+  List,
+  ListItem,
+  SearchBar,
+  Rating,
+  ButtonGroup,
+  Button
+} from "react-native-elements";
 
 import CocktailCard from "../components/CocktailCard";
+import { getFavDrinks } from "../assets/drinks/DrinksInterface";
 
 export default class FavoriteList extends React.Component {
   constructor(props) {
@@ -20,9 +22,9 @@ export default class FavoriteList extends React.Component {
       showCocktailCardModalVisible: false,
       favoriteDrinks: [],
       clickedCocktail: undefined,
-      searchQuery: "",
       error: null
     };
+    getFavDrinks();
   }
 
   static navigationOptions = {
@@ -34,18 +36,17 @@ export default class FavoriteList extends React.Component {
   }
 
   makeRemoteRequest = () => {
-    //this.setState({ loading: true });
+    this.setState({ loading: true });
     //This codeblock must load the favorite cocktails data
-    /*
-    getDrinks(30, this.state.searchQuery)
+
+    getFavDrinks()
       .then(drinks => {
-        this.setState({ loading: false, allDrinks: drinks });
+        this.setState({ loading: false, favoriteDrinks: drinks });
       })
 
       .catch(error => {
         this.setState({ error, loading: false });
       });
-      */
   };
 
   showCocktailCardModal(cocktail) {
@@ -58,15 +59,12 @@ export default class FavoriteList extends React.Component {
     this.setState({ searchQuery: query }, () => this.makeRemoteRequest());
   };
 
+  updateSelectedStars = button => {
+    console.log(button);
+  };
+
   flatListHeaderComponent = () => {
-    return (
-      <SearchBar
-        placeholder="Search for..."
-        lightTheme
-        round
-        onChangeText={this.searchBarTextChanged}
-      />
-    );
+    return null;
   };
 
   flatListFooterComponent = () => {
@@ -91,7 +89,6 @@ export default class FavoriteList extends React.Component {
           }
           cocktailToShow={this.state.clickedCocktail}
         />
-
         <List>
           <FlatList
             data={this.state.favoriteDrinks}

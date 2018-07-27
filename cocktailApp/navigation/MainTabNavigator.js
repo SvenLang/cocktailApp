@@ -59,6 +59,7 @@ FavoriteCocktailStack.navigationOptions = {
           ? `ios-information-circle${focused ? "" : "-outline"}`
           : "md-star"
       }
+      type="ionicon"
     />
   )
 };
