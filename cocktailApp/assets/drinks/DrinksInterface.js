@@ -24,6 +24,20 @@ export const getDrinks = (limit = 20, searchQuery = "") => {
   });
 };
 
+//Get all Cocktails with a rating equal 5
+export const getFavDrinks = (limit = 150) => {
+  return new Promise((resolve, reject) => {
+    const result = _.filter(allDrinks, drink => {
+      if (drink.rating === 5) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    resolve(_.take(result, limit));
+  });
+};
+
 export const writeRating = drink => {};
 
 export default getDrinks;
