@@ -17,7 +17,7 @@ export default [
     instructions:
       "1. Fill a rocks glass with ice 2.add white creme de cacao and vodka 3.stir",
     video: "",
-    rating: 1
+    rating: 5
   },
   {
     key: 1,
@@ -43,7 +43,7 @@ export default [
     instructions:
       "Shake ingredients in a mixing tin filled with ice cubes. Strain into a rocks glass.",
     video: "",
-    rating: 0
+    rating: 4
   },
   {
     key: 2,

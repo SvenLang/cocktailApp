@@ -1,33 +1,14 @@
 import React from 'react';
-import { Platform, AppRegistry } from 'react-native';
+import { Platform } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-//import HomeScreen from "../screens/HomeScreen";
 import CocktailList from '../screens/CocktailList';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import RandomCocktail from '../screens/RandomCocktail';
+import FavoriteList from "../screens/FavoriteList";
 
-/*
-const HomeStack = createStackNavigator({
-  Home: HomeScreen
-});
-
-HomeStack.navigationOptions = {
-  tabBarLabel: "Home",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === "ios"
-          ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-information-circle"
-      }
-    />
-  )
-};
-*/
 const CocktailStack = createStackNavigator({
 	Cocktails: CocktailList,
 });
@@ -39,6 +20,25 @@ CocktailStack.navigationOptions = {
       focused={focused}
       name="glass-tulip"
       type="material-community"
+    />
+  )
+};
+
+const FavoriteCocktailStack = createStackNavigator({
+  FavoriteCocktails: FavoriteList
+});
+
+FavoriteCocktailStack.navigationOptions = {
+  tabBarLabel: "Fav Cocktails",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-information-circle${focused ? "" : "-outline"}`
+          : "md-star"
+      }
+      type="ionicon"
     />
   )
 };
@@ -116,8 +116,8 @@ const CocktailDrawer = createDrawerNavigator(
 );
 
 export default createBottomTabNavigator({
-	//HomeStack,
 	CocktailStack,
+  	FavoriteCocktailStack,
 	LinksStack,
 	SettingsStack,
 	RandomCocktailStack,
