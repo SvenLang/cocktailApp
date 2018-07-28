@@ -1,14 +1,7 @@
 import React from "react";
 import { StyleSheet, View, FlatList, ActivityIndicator } from "react-native";
 
-import {
-  List,
-  ListItem,
-  SearchBar,
-  Rating,
-  ButtonGroup,
-  Button
-} from "react-native-elements";
+import { List, ListItem, Rating } from "react-native-elements";
 
 import CocktailCard from "../components/CocktailCard";
 import { getFavDrinks } from "../assets/drinks/DrinksInterface";
@@ -80,8 +73,9 @@ export default class FavoriteList extends React.Component {
   };
 
   render() {
+    getFavDrinks();
     return (
-      <View style={styles.container}>
+      <View>
         <CocktailCard
           visible={this.state.showCocktailCardModalVisible}
           onRequestClose={() =>
