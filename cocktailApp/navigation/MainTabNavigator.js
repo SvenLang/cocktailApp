@@ -1,124 +1,95 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createDrawerNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from "react";
+import { Platform } from "react-native";
+import {
+  createStackNavigator,
+  createBottomTabNavigator
+} from "react-navigation";
 
-import TabBarIcon from '../components/TabBarIcon';
-import CocktailList from '../screens/CocktailList';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import RandomCocktail from '../screens/RandomCocktail';
-import FavoriteList from "../screens/FavoriteList";
+import TabBarIcon from "../components/TabBarIcon";
+import Cocktails from "../screens/Cocktails";
+import SearchScreen from "../screens/SearchScreen";
+import GameScreen from "../screens/GameScreen";
+import NewCocktailScreen from "../screens/NewCocktailScreen";
 
-const CocktailStack = createStackNavigator({
-	Cocktails: CocktailList,
+const CocktailsStack = createStackNavigator({
+  Cocktails: Cocktails
 });
 
-CocktailStack.navigationOptions = {
+CocktailsStack.navigationOptions = {
   tabBarLabel: "Cocktails",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name="glass-tulip"
-      type="material-community"
-    />
-  )
-};
-
-const FavoriteCocktailStack = createStackNavigator({
-  FavoriteCocktails: FavoriteList
-});
-
-FavoriteCocktailStack.navigationOptions = {
-  tabBarLabel: "Fav Cocktails",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === "ios"
           ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-star"
+          : "glass-tulip"
       }
-      type="ionicon"
+      type="material-community"
     />
   )
 };
 
-const RandomCocktailStack = createStackNavigator({
-	Random: RandomCocktail,
+const SearchStack = createStackNavigator({
+  Search: SearchScreen
 });
 
-RandomCocktailStack.navigationOptions = {
-	tabBarLabel: 'Random',
-	tabBarIcon: ({ focused }) => (
-		<TabBarIcon
-			focused={focused}
-			name={
-        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "random"
-      }
-      type="font-awesome"
-		/>
-	),
-};
-
-const LinksStack = createStackNavigator({
-	Links: LinksScreen,
-});
-
-LinksStack.navigationOptions = {
-  tabBarLabel: "Links",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === "ios" ? `ios-link${focused ? "" : "-outline"}` : "link"
-      }
-      type="entypo"
-    />
-  )
-};
-
-const SettingsStack = createStackNavigator({
-	Settings: SettingsScreen,
-});
-
-SettingsStack.navigationOptions = {
-  tabBarLabel: "Settings",
+SearchStack.navigationOptions = {
+  tabBarLabel: "Search",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === "ios"
-          ? `ios-options${focused ? "" : "-outline"}`
-          : "md-options"
+          ? `ios-information-circle${focused ? "" : "-outline"}`
+          : "search"
+      }
+      type=""
+    />
+  )
+};
+
+const NewCocktailStack = createStackNavigator({
+  NewCocktail: NewCocktailScreen
+});
+
+NewCocktailStack.navigationOptions = {
+  tabBarLabel: "New Cocktail",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-information-circle${focused ? "" : "-outline"}`
+          : "add"
+      }
+      type=""
+    />
+  )
+};
+
+const GamesStack = createStackNavigator({
+  Games: GameScreen
+});
+
+GamesStack.navigationOptions = {
+  tabBarLabel: "Games",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-information-circle${focused ? "" : "-outline"}`
+          : "md-game-controller-b"
       }
       type="ionicon"
     />
   )
 };
 
-const CocktailDrawer = createDrawerNavigator(
-	{
-		AllCocktails: {
-			path: '/',
-			screen: CocktailStack,
-		},
-		RandCocktail: {
-			path: '/',
-			screen: RandomCocktailStack,
-		},
-	},
-	{
-		initialRouteName: 'AllCocktails',
-		contentOptions: {
-			activeTintColor: '#e91e63',
-		},
-	}
-);
-
 export default createBottomTabNavigator({
-	CocktailStack,
-  	FavoriteCocktailStack,
-	LinksStack,
-	SettingsStack,
-	RandomCocktailStack,
+  CocktailsStack,
+  SearchStack,
+  NewCocktailStack,
+  GamesStack
 });
