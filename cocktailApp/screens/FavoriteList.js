@@ -1,10 +1,7 @@
 import React from "react";
-import { StyleSheet, View, FlatList, ActivityIndicator } from "react-native";
-
-import { List, ListItem, Rating } from "react-native-elements";
-
-import CocktailCard from "../components/CocktailCard";
+import { StyleSheet, View } from "react-native";
 import { getFavDrinks } from "../assets/drinks/DrinksInterface";
+import BasicCocktailList from "../components/BasicCocktailList";
 
 export default class FavoriteList extends React.Component {
   constructor(props) {
@@ -19,10 +16,6 @@ export default class FavoriteList extends React.Component {
     };
     getFavDrinks();
   }
-
-  static navigationOptions = {
-    title: "Favorites"
-  };
 
   componentDidMount() {
     this.makeRemoteRequest();
@@ -42,73 +35,14 @@ export default class FavoriteList extends React.Component {
       });
   };
 
-  showCocktailCardModal(cocktail) {
-    this.setState({ showCocktailCardModalVisible: true });
-
-    this.setState({ clickedCocktail: cocktail });
-  }
-
-  searchBarTextChanged = query => {
-    this.setState({ searchQuery: query }, () => this.makeRemoteRequest());
-  };
-
-  updateSelectedStars = button => {
-    console.log(button);
-  };
-
-  flatListHeaderComponent = () => {
-    return null;
-  };
-
-  flatListFooterComponent = () => {
-    if (!this.state.loading) {
-      return null;
-    }
-
-    return (
-      <View>
-        <ActivityIndicator animating size="large" />
-      </View>
-    );
-  };
-
   render() {
     getFavDrinks();
     return (
       <View>
-        <CocktailCard
-          visible={this.state.showCocktailCardModalVisible}
-          onRequestClose={() =>
-            this.setState({ showCocktailCardModalVisible: false })
-          }
-          cocktailToShow={this.state.clickedCocktail}
+        <BasicCocktailList
+          drinks={this.state.favoriteDrinks}
+          showSearchBar={false}
         />
-        <List>
-          <FlatList
-            data={this.state.favoriteDrinks}
-            renderItem={({ item }) => (
-              <View>
-                <Rating
-                  readonly
-                  imageSize={18}
-                  style={styles.rating}
-                  startingValue={item.rating}
-                />
-                <ListItem
-                  roundAvatar
-                  title={item.name}
-                  subtitle={item.category}
-                  avatar={{ uri: item.drinkThumb }}
-                  onPress={() => this.showCocktailCardModal(item)}
-                />
-              </View>
-            )}
-            keyExtractor={item => item.key.toString()}
-            ListHeaderComponent={this.flatListHeaderComponent}
-            stickyHeaderIndices={[0]} //For a fixed Searchbar Header
-            ListFooterComponent={this.flatListFooterComponent}
-          />
-        </List>
       </View>
     );
   }
