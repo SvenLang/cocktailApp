@@ -16,7 +16,8 @@ export default class CocktailList extends React.Component {
       allDrinks: [],
       clickedCocktail: undefined,
       searchQuery: "",
-      error: null
+      error: null,
+      showSearchBar: this.props.showSearchBar
     };
   }
 
@@ -49,14 +50,18 @@ export default class CocktailList extends React.Component {
   };
 
   flatListHeaderComponent = () => {
-    return (
-      <SearchBar
-        placeholder="Suche nach..."
-        lightTheme
-        round
-        onChangeText={this.searchBarTextChanged}
-      />
-    );
+    if (this.state.showSearchBar === true) {
+      return (
+        <SearchBar
+          placeholder="Suche nach..."
+          lightTheme
+          round
+          onChangeText={this.searchBarTextChanged}
+        />
+      );
+    } else {
+      return null;
+    }
   };
 
   flatListFooterComponent = () => {
