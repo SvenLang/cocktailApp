@@ -30,7 +30,7 @@ export default class Cocktails extends React.Component {
     //Select the right content which is selected with the buttons at the top bar
     switch (this.state.selectedIndex) {
       case 0:
-        content = <CocktailList />;
+        content = <CocktailList showSearchBar={true} />;
         break;
       case 1:
         content = <RandomCocktail />;
