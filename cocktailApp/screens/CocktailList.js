@@ -80,32 +80,30 @@ export default class CocktailList extends React.Component {
           }
           cocktailToShow={this.state.clickedCocktail}
         />
-        <List>
-          <FlatList
-            data={this.state.allDrinks}
-            renderItem={({ item }) => (
-              <View>
-                <Rating
-                  readonly
-                  imageSize={18}
-                  style={styles.rating}
-                  startingValue={item.rating}
-                />
-                <ListItem
-                  roundAvatar
-                  title={item.name}
-                  subtitle={item.category}
-                  avatar={{ uri: item.drinkThumb }}
-                  onPress={() => this.showCocktailCardModal(item)}
-                />
-              </View>
-            )}
-            keyExtractor={item => item.key.toString()}
-            ListHeaderComponent={this.flatListHeaderComponent}
-            stickyHeaderIndices={[0]} //For a fixed Searchbar Header
-            ListFooterComponent={this.flatListFooterComponent}
-          />
-        </List>
+        <FlatList
+          data={this.state.allDrinks}
+          renderItem={({ item }) => (
+            <View>
+              <Rating
+                readonly
+                imageSize={18}
+                style={styles.rating}
+                startingValue={item.rating}
+              />
+              <ListItem
+                roundAvatar
+                title={item.name}
+                subtitle={item.category}
+                avatar={{ uri: item.drinkThumb }}
+                onPress={() => this.showCocktailCardModal(item)}
+              />
+            </View>
+          )}
+          keyExtractor={item => item.key.toString()}
+          ListHeaderComponent={this.flatListHeaderComponent}
+          stickyHeaderIndices={[0]} //For a fixed Searchbar Header
+          ListFooterComponent={this.flatListFooterComponent}
+        />
       </View>
     );
   }
