@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, View, Text, Button, TextInput, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Image,
+  ImageBackground
+} from "react-native";
+import { Button } from "react-native-elements";
 
 const imgDices = [
   require("../../assets/images/cubeUnmarked.png"),
@@ -19,7 +27,7 @@ export default class Maexle extends React.Component {
       diceOne: undefined,
       diceTwo: undefined,
       doublet: false,
-      maexleThrowResult: undefined,
+      maexleThrowResult: 0,
       scoreToBeat: 0,
       typedDiceOne: undefined,
       typedDiceTwo: undefined,
@@ -96,7 +104,7 @@ export default class Maexle extends React.Component {
   }
 
   sayThrowResultToNeigbor() {
-    if (this.state.maexleThrowResult !== undefined) {
+    if (this.state.maexleThrowResult !== 0) {
       console.log("1");
       console.log(this.state.maexleThrowResult);
       console.log(this.state.scoreToBeat);
@@ -108,7 +116,7 @@ export default class Maexle extends React.Component {
               doubletThrowedBefore: true,
               saidScoreToNeighbor: this.state.maexleThrowResult,
               scoreIsSaidToNeihbor: true,
-              maexleThrowResult: undefined,
+              maexleThrowResult: 0,
               imgDiceOne: imgDices[0],
               imgDiceTwo: imgDices[0]
             });
@@ -120,7 +128,7 @@ export default class Maexle extends React.Component {
             doubletThrowedBefore: true,
             saidScoreToNeighbor: this.state.maexleThrowResult,
             scoreIsSaidToNeihbor: true,
-            maexleThrowResult: undefined,
+            maexleThrowResult: 0,
             imgDiceOne: imgDices[0],
             imgDiceTwo: imgDices[0]
           });
@@ -135,7 +143,7 @@ export default class Maexle extends React.Component {
             this.setState({
               saidScoreToNeighbor: this.state.maexleThrowResult,
               scoreIsSaidToNeihbor: true,
-              maexleThrowResult: undefined,
+              maexleThrowResult: 0,
               imgDiceOne: imgDices[0],
               imgDiceTwo: imgDices[0]
             });
@@ -159,7 +167,7 @@ export default class Maexle extends React.Component {
             saidScoreToNeighbor: this.state.typedScore,
             scoreIsSaidToNeihbor: true,
             doubletThrowedBefore: true,
-            maexleThrowResult: undefined,
+            maexleThrowResult: 0,
             typedScore: "",
             imgDiceOne: imgDices[0],
             imgDiceTwo: imgDices[0]
@@ -173,7 +181,7 @@ export default class Maexle extends React.Component {
             saidScoreToNeighbor: this.state.typedScore,
             scoreIsSaidToNeihbor: true,
             doubletThrowedBefore: true,
-            maexleThrowResult: undefined,
+            maexleThrowResult: 0,
             typedScore: "",
             imgDiceOne: imgDices[0],
             imgDiceTwo: imgDices[0]
@@ -183,7 +191,7 @@ export default class Maexle extends React.Component {
             this.setState({
               saidScoreToNeighbor: this.state.typedScore,
               scoreIsSaidToNeihbor: true,
-              maexleThrowResult: undefined,
+              maexleThrowResult: 0,
               typedScore: "",
               imgDiceOne: imgDices[0],
               imgDiceTwo: imgDices[0]
@@ -225,7 +233,7 @@ export default class Maexle extends React.Component {
       diceOne: undefined,
       diceTwo: undefined,
       doublet: false,
-      maexleThrowResult: undefined,
+      maexleThrowResult: 0,
       scoreToBeat: 0,
       typedDiceOne: undefined,
       typedDiceTwo: undefined,
@@ -241,51 +249,134 @@ export default class Maexle extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>said result: {this.state.saidScoreToNeighbor}</Text>
-        <Text>Score to beat: {this.state.scoreToBeat}</Text>
-        <View style={styles.cubesView}>
-          <Image source={this.state.imgDiceOne} style={styles.cubeImg} />
-          <Image source={this.state.imgDiceTwo} style={styles.cubeImg} />
-        </View>
-        <Text>Maexle result: {this.state.maexleThrowResult}</Text>
-        <Text>Result to say neighbor:</Text>
-        <TextInput
-          placeholder={"result..."}
-          onChangeText={text => this.onChangeTextResultToSay(text)}
-          value={this.state.typedScore}
-        />
-        <Button
-          disabled={this.state.diced}
-          title={"roll the dices"}
-          onPress={() => this.rollTheDice()}
-        />
-        <Button
-          disabled={this.state.scoreIsSaidToNeihbor || !this.state.diced}
-          title={"say throw result to neighbor"}
-          onPress={() => this.sayThrowResultToNeigbor()}
-        />
-        <Button
-          disabled={this.state.scoreIsSaidToNeihbor || !this.state.diced}
-          title={"say typed result to neighbor"}
-          onPress={() => this.sayTypedResultToNeighbor()}
-        />
-        <Text>Believe the result? </Text>
-        <View
-          style={{
-            flexDirection: "row"
-          }}
+        <ImageBackground
+          source={require("../../assets/images/MaexleBackground2.jpg")}
+          style={{ width: "100%", height: "100%" }}
         >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between"
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                margin: 5
+              }}
+            >
+              <Text style={styles.textStyle}>Said result:</Text>
+              <Text style={styles.textStyle}>
+                {this.state.saidScoreToNeighbor}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                margin: 5
+              }}
+            >
+              <Text style={styles.textStyle}>Score to beat:</Text>
+              <Text style={styles.textStyle}>{this.state.scoreToBeat}</Text>
+            </View>
+          </View>
+          <View style={styles.cubesView}>
+            <Image source={this.state.imgDiceOne} style={styles.cubeImg} />
+            <Image source={this.state.imgDiceTwo} style={styles.cubeImg} />
+          </View>
           <Button
-            disabled={!this.state.saidScoreToNeighbor}
-            title={"Yes"}
-            onPress={() => this.believeTheResult()}
+            disabled={this.state.diced}
+            title={"roll the dices"}
+            titleStyle={styles.buttonTitleStyle}
+            onPress={() => this.rollTheDice()}
+            buttonStyle={styles.buttonStyle}
           />
-          <Button
-            disabled={!this.state.saidScoreToNeighbor}
-            title={"No"}
-            onPress={() => this.notBelieveTheResult()}
-          />
-        </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "stretch"
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-around",
+                alignItems: "center",
+                margin: 5
+              }}
+            >
+              <Text style={styles.textStyle}>Maexle result:</Text>
+              <Text style={styles.textStyle}>
+                {this.state.maexleThrowResult}
+              </Text>
+              <Button
+                disabled={this.state.scoreIsSaidToNeihbor || !this.state.diced}
+                title={"say throw result"}
+                titleStyle={styles.buttonTitleStyle}
+                onPress={() => this.sayThrowResultToNeigbor()}
+                buttonStyle={styles.buttonStyle}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-around",
+                alignItems: "center",
+                margin: 5
+              }}
+            >
+              <Text style={styles.textStyle}>Type a result:</Text>
+              <TextInput
+                placeholder={"result"}
+                placeholderTextColor="black"
+                onChangeText={text => this.onChangeTextResultToSay(text)}
+                value={this.state.typedScore}
+                maxLength={2}
+                style={{
+                  fontSize: 20,
+                  color: "black",
+                  borderColor: "black",
+                  borderWidth: 1,
+                  width: 50
+                }}
+              />
+              <Button
+                disabled={this.state.scoreIsSaidToNeihbor || !this.state.diced}
+                title={"say typed result"}
+                titleStyle={styles.buttonTitleStyle}
+                onPress={() => this.sayTypedResultToNeighbor()}
+                buttonStyle={styles.buttonStyle}
+              />
+            </View>
+          </View>
+          <View style={{ margin: 5 }}>
+            <Text style={styles.textStyle}>Believe the result? </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around"
+              }}
+            >
+              <Button
+                disabled={!this.state.saidScoreToNeighbor}
+                title={"Yes"}
+                onPress={() => this.believeTheResult()}
+                titleStyle={styles.buttonTitleStyle}
+                buttonStyle={styles.buttonStyle}
+              />
+              <Button
+                disabled={!this.state.saidScoreToNeighbor}
+                title={"No"}
+                onPress={() => this.notBelieveTheResult()}
+                titleStyle={styles.buttonTitleStyle}
+                buttonStyle={styles.buttonStyle}
+              />
+            </View>
+          </View>
+        </ImageBackground>
       </View>
     );
   }
@@ -293,7 +384,8 @@ export default class Maexle extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    flexDirection: "column"
   },
   buttongroup: {
     height: 30
@@ -306,5 +398,15 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     margin: 10
+  },
+  buttonStyle: {
+    height: 40,
+    margin: 5
+  },
+  buttonTitleStyle: {
+    fontSize: 22
+  },
+  textStyle: {
+    fontSize: 20
   }
 });
