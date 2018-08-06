@@ -335,13 +335,8 @@ export default class Maexle extends React.Component {
                 onChangeText={text => this.onChangeTextResultToSay(text)}
                 value={this.state.typedScore}
                 maxLength={2}
-                style={{
-                  fontSize: 20,
-                  color: "black",
-                  borderColor: "black",
-                  borderWidth: 1,
-                  width: 50
-                }}
+                keyboardType={"numeric"}
+                style={styles.textInputStyle}
               />
               <Button
                 disabled={this.state.scoreIsSaidToNeihbor || !this.state.diced}
@@ -408,5 +403,12 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontSize: 20
+  },
+  textInputStyle: {
+    fontSize: 20,
+    color: "black",
+    borderColor: "black",
+    borderWidth: 1,
+    width: 50
   }
 });
