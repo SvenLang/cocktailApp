@@ -2,19 +2,20 @@ import React from "react";
 import { StyleSheet, View, FlatList, ActivityIndicator } from "react-native";
 import { ListItem, SearchBar, Rating } from "react-native-elements";
 import CocktailCard from "../components/CocktailCard";
-import { getDrinks } from "../assets/drinks/DrinksInterface";
-
-//const allDrinks = require("../assets/drinks/allDrinksModified.json");
+import Store from "../AsyncStorage/Store";
 
 export default class CocktailList extends React.Component {
   constructor(props) {
     super(props);
+
+    this.refresh = props.refresh;
 
     this.state = {
       loading: false,
       showCocktailCardModalVisible: false,
       clickedCocktail: undefined,
       error: null,
+      drinks: undefined,
       showSearchBar: this.props.showSearchBar
     };
   }
@@ -54,15 +55,24 @@ export default class CocktailList extends React.Component {
     );
   };
 
+  ratingCompleted = async rating => {
+    console.log(rating);
+    clickedCocktail = this.state.clickedCocktail;
+    clickedCocktail.rating = rating;
+    await Store.storeRatingChange(clickedCocktail, rating);
+    this.refresh();
+  };
+
   render() {
     return (
       <View>
         <CocktailCard
           visible={this.state.showCocktailCardModalVisible}
-          onRequestClose={() =>
-            this.setState({ showCocktailCardModalVisible: false })
-          }
+          onRequestClose={() => {
+            this.setState({ showCocktailCardModalVisible: false });
+          }}
           cocktailToShow={this.state.clickedCocktail}
+          ratingCompleted={this.ratingCompleted}
         />
         <FlatList
           data={this.props.drinks}

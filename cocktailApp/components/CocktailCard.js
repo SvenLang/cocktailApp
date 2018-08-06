@@ -16,10 +16,6 @@ export default class CocktailCard extends React.Component {
     super(props);
   }
 
-  ratingCompleted(rating) {
-    console.log(rating);
-  }
-
   render() {
     //If no Cocktail was defined from CocktailList.js then the CocktailCard shows nothing.
     //This situation occurs when the app starts.
@@ -48,7 +44,7 @@ export default class CocktailCard extends React.Component {
                 fractions={0}
                 startingValue={this.props.cocktailToShow.rating}
                 imageSize={20}
-                onFinishRating={this.ratingCompleted}
+                onFinishRating={this.props.ratingCompleted}
                 style={styles.rating}
               />
               <Image

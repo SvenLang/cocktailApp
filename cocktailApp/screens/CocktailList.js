@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { getDrinks } from "../assets/drinks/DrinksInterface";
 import BasicCocktailList from "../components/BasicCocktailList";
-
-//const allDrinks = require("../assets/drinks/allDrinksModified.json");
+import Store from "../AsyncStorage/Store";
+//import allDrinks from "../assets/drinks/allDrinks";
 
 export default class CocktailList extends React.Component {
   constructor(props) {
@@ -22,9 +22,26 @@ export default class CocktailList extends React.Component {
     title: "Cocktails"
   };
 
-  componentDidMount() {
-    this.makeRemoteRequest();
-  }
+  componentWillMount = async () => {
+    //this.removeAllDrinks();
+    //this.saveAllDrinks();
+    this.loadAllDrinks();
+    //this.makeRemoteRequest();
+  };
+
+  removeAllDrinks = async () => {
+    await Store.deleteAllDrinks();
+  };
+
+  saveAllDrinks = async () => {
+    await Store.saveAllDrinks(allDrinks);
+  };
+
+  loadAllDrinks = async () => {
+    const allDrinks = await Store.loadAllDrinks();
+    this.setState({ allDrinks: allDrinks });
+  };
+
   makeRemoteRequest = () => {
     this.setState({ loading: true });
 
@@ -41,6 +58,14 @@ export default class CocktailList extends React.Component {
     this.setState({ searchQuery: query }, () => this.makeRemoteRequest());
   };
 
+  ratingCompleted = rating => {
+    console.log(rating);
+  };
+
+  refresh = async () => {
+    this.loadAllDrinks();
+  };
+
   render() {
     return (
       <View>
@@ -48,6 +73,7 @@ export default class CocktailList extends React.Component {
           showSearchBar={true}
           drinks={this.state.allDrinks}
           searchBarTextChanged={this.searchBarTextChanged}
+          refresh={this.refresh}
         />
       </View>
     );
