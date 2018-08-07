@@ -11,6 +11,7 @@ export default class CocktailList extends React.Component {
 
     this.state = {
       loading: false,
+      loadedAllDrinks: [],
       allDrinks: [],
       searchQuery: "",
       error: null,
@@ -39,6 +40,14 @@ export default class CocktailList extends React.Component {
 
   loadAllDrinks = async () => {
     const allDrinks = await Store.loadAllDrinks();
+    this.setState({ allDrinks: allDrinks, loadedAllDrinks: allDrinks });
+  };
+
+  searchForDrink = async () => {
+    const allDrinks = await Store.searchForDrink(
+      this.state.loadedAllDrinks,
+      this.state.searchQuery
+    );
     this.setState({ allDrinks: allDrinks });
   };
 
@@ -55,7 +64,7 @@ export default class CocktailList extends React.Component {
   };
 
   searchBarTextChanged = query => {
-    this.setState({ searchQuery: query }, () => this.makeRemoteRequest());
+    this.setState({ searchQuery: query }, () => this.searchForDrink());
   };
 
   ratingCompleted = rating => {

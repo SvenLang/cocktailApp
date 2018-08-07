@@ -1,5 +1,6 @@
 import { AsyncStorage } from "react-native";
 import _ from "lodash";
+//import allDrinks from "../assets/drinks/allDrinks";
 
 const allDrinks_Key = "AllDrink_Items";
 
@@ -43,7 +44,7 @@ export default class Store {
   };
 
   static storeRatingChange = async (item, rating) => {
-    allDrinks = await Store.loadAllDrinks();
+    let allDrinks = await Store.loadAllDrinks();
     const itemToChange = allDrinks.find(drink => drink.name === item.name);
     itemToChange.rating = rating;
     const indexFromItemToChange = _.findIndex(allDrinks, drink => {
@@ -57,5 +58,29 @@ export default class Store {
     };
     allDrinks.insert(indexFromItemToChange, itemToChange);
     await Store.saveAllDrinks(allDrinks);
+  };
+
+  static searchForDrink = async (allDrinks, query) => {
+    //allDrinks = await Store.loadAllDrinks();
+    searchResult = allDrinks.filter(drink => {
+      nameLC = drink.name.toLowerCase();
+      categoryLC = drink.category.toLowerCase();
+      query = query.toLowerCase();
+      if (nameLC.includes(query) || categoryLC.includes(query)) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    return searchResult || [];
+  };
+
+  static getFavouriteDrinks = async (top = 50) => {
+    let allDrinks = await Store.loadAllDrinks();
+    allDrinks.sort((a, b) => {
+      return b.rating - a.rating;
+    });
+    favouriteDrinks = allDrinks.slice(0, top);
+    return favouriteDrinks;
   };
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { getFavDrinks } from "../assets/drinks/DrinksInterface";
 import BasicCocktailList from "../components/BasicCocktailList";
+import Store from "../AsyncStorage/Store";
 
 export default class FavoriteList extends React.Component {
   constructor(props) {
@@ -14,29 +15,18 @@ export default class FavoriteList extends React.Component {
       clickedCocktail: undefined,
       error: null
     };
-    getFavDrinks();
   }
 
   componentDidMount() {
-    this.makeRemoteRequest();
+    this.loadFavouriteDrinks();
   }
 
-  makeRemoteRequest = () => {
-    this.setState({ loading: true });
-    //This codeblock must load the favorite cocktails data
-
-    getFavDrinks()
-      .then(drinks => {
-        this.setState({ loading: false, favoriteDrinks: drinks });
-      })
-
-      .catch(error => {
-        this.setState({ error, loading: false });
-      });
+  loadFavouriteDrinks = async () => {
+    const favoriteDrinks = await Store.getFavouriteDrinks();
+    this.setState({ favoriteDrinks: favoriteDrinks });
   };
 
   render() {
-    getFavDrinks();
     return (
       <View>
         <BasicCocktailList
