@@ -43,6 +43,32 @@ export default class Store {
     }
   };
 
+  static addNewDrink = async newDrink => {
+    let allDrinks = await Store.loadAllDrinks();
+    allDrinks.push(newDrink);
+    allDrinks.sort((a, b) => {
+      let nameA = a.name.toLowerCase();
+      let nameB = b.name.toLowerCase();
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    await Store.saveAllDrinks(allDrinks);
+  };
+
+  static deleteDrink = async drinkToDelete => {
+    let allDrinks = await Store.loadAllDrinks();
+    _.remove(allDrinks, drink => {
+      return drink.name === drinkToDelete.name;
+    });
+    await Store.saveAllDrinks(allDrinks);
+  };
+
   static storeRatingChange = async (item, rating) => {
     let allDrinks = await Store.loadAllDrinks();
     const itemToChange = allDrinks.find(drink => drink.name === item.name);
