@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { getDrinks } from "../assets/drinks/DrinksInterface";
 import BasicCocktailList from "../components/BasicCocktailList";
-import Store from "../AsyncStorage/Store";
+import Store from "../Firebase/Store";
 //import allDrinks from "../assets/drinks/allDrinks";
 
 export default class CocktailList extends React.Component {

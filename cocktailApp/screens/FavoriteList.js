@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { getFavDrinks } from "../assets/drinks/DrinksInterface";
 import BasicCocktailList from "../components/BasicCocktailList";
-import Store from "../AsyncStorage/Store";
+import Store from "../Firebase/Store";
 
 export default class FavoriteList extends React.Component {
   constructor(props) {

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, FlatList, ActivityIndicator } from "react-native";
 import { ListItem, SearchBar, Rating } from "react-native-elements";
 import CocktailCard from "../components/CocktailCard";
-import Store from "../AsyncStorage/Store";
+import Store from "../Firebase/Store";
 
 export default class CocktailList extends React.Component {
   constructor(props) {
