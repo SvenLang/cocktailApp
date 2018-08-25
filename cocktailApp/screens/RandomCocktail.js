@@ -104,15 +104,10 @@ export default class RandomCocktail extends Component {
 		return (
 			<View>
 				<Button title="New Random Cocktail" onPress={() => this.getRandomCocktail()} />
-				<Text>This is a Random Cocktail:</Text>
-				<Text>{JSON.stringify(this.state.selectedCocktail)}</Text>
 				<CocktailCard
 					visible={this.state.visible}
 					cocktailToShow={this.state.selectedCocktail}
 					onRequestClose={() => this.setState({ visible: false })}
-					buttonVisible={true}
-					buttonTitle={'New Random Cocktail'}
-					buttonAction={() => this.getRandomCocktail()}
 				/>
 			</View>
 		);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, FlatList, ActivityIndicator } from 'react-native';
 import { ListItem, SearchBar, Rating } from 'react-native-elements';
-import CocktailCard from '../components/CocktailCard';
+import CocktailCardModal from '../components/CocktailCardModal';
 import { getDrinks } from '../assets/drinks/DrinksInterface';
 
 //const allDrinks = require("../assets/drinks/allDrinksModified.json");
@@ -57,7 +57,7 @@ export default class CocktailList extends React.Component {
 	render() {
 		return (
 			<View>
-				<CocktailCard
+				<CocktailCardModal
 					visible={this.state.showCocktailCardModalVisible}
 					onRequestClose={() => this.setState({ showCocktailCardModalVisible: false })}
 					cocktailToShow={this.state.clickedCocktail}
