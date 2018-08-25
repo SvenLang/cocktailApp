@@ -1,6 +1,7 @@
 import Expo, { SQLite, FileSystem as FS, Asset } from 'expo';
 import React, { Component } from 'react';
-import { StyleSheet, Button, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Button } from 'react-native-elements';
 import CocktailCard from '../components/CocktailCard';
 
 //database usage example!
@@ -100,10 +101,20 @@ export default class RandomCocktail extends Component {
 
 	// render what is displayed
 	render() {
-		console.log('render');
+		console.log('render randomCocktail');
 		return (
 			<View>
-				<Button title="New Random Cocktail" onPress={() => this.getRandomCocktail()} />
+				<Button
+					title="New Random Cocktail"
+					onPress={() => this.getRandomCocktail()}
+					buttonStyle={{
+						backgroundColor: 'rgba(92, 99,216, 1)',
+						height: 45,
+						borderColor: 'transparent',
+						borderWidth: 0,
+						borderRadius: 5,
+					}}
+				/>
 				<CocktailCard
 					visible={this.state.visible}
 					cocktailToShow={this.state.selectedCocktail}

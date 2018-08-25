@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, Modal, FlatList, View, ImageBackground } from 'react-native';
+import { Image, StyleSheet, Text, Modal, FlatList, View, ImageBackground, ScrollView } from 'react-native';
 
 import { Card, Button, Rating, ListItem } from 'react-native-elements';
 
@@ -19,7 +19,7 @@ export default class CocktailCard extends React.Component {
 			return null;
 		}
 		return (
-			<View>
+			<ScrollView>
 				<ImageBackground
 					source={require('../assets/images/tropicalBackground.jpg')}
 					style={{ width: '100%', height: '100%' }}
@@ -66,7 +66,7 @@ export default class CocktailCard extends React.Component {
 						<Text>{this.props.cocktailToShow.instructions}</Text>
 					</Card>
 				</ImageBackground>
-			</View>
+			</ScrollView>
 		);
 	}
 }
