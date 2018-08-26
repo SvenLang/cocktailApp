@@ -1,6 +1,6 @@
 import Expo, { SQLite, FileSystem as FS, Asset } from 'expo';
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import CocktailCard from '../components/CocktailCard';
 
@@ -104,25 +104,74 @@ export default class RandomCocktail extends Component {
 		console.log('render randomCocktail');
 		return (
 			<View>
-				<Button
-					title="New Random Cocktail"
-					onPress={() => this.getRandomCocktail()}
-					buttonStyle={{
-						backgroundColor: 'rgba(92, 99,216, 1)',
-						height: 45,
-						borderColor: 'transparent',
-						borderWidth: 0,
-						borderRadius: 5,
-					}}
-				/>
-				<CocktailCard
-					visible={this.state.visible}
-					cocktailToShow={this.state.selectedCocktail}
-					onRequestClose={() => this.setState({ visible: false })}
-				/>
+				<View>
+					<Button
+						title="New"
+						onPress={() => this.getRandomCocktail()}
+						buttonStyle={{
+							backgroundColor: 'rgba(92, 99,216, 1)',
+							bord.-lk,erColor: 'transparent',
+							height: 45,
+							borderWidth: 0,
+							borderRadius: 15,
+						}}
+					/>
+				</View>
+				<View>
+					<CocktailCard
+						visible={this.state.visible}
+						cocktailToShow={this.state.selectedCocktail}
+						onRequestClose={() => this.setState({ visible: false })}
+					/>
+				</View>
 			</View>
 		);
 	}
 
-	// set the styles
+	// render() {
+	// 	console.log('render randomCocktail');
+	// 	return (
+	// 		<View style={styles.container}>
+	// 			<View style={styles.buttonBox}>
+	// 				<Text>Button</Text>
+	// 			</View>
+
+	// 			<View style={styles.cocktailCardView}>
+	// 				<Text>CocktailCard</Text>
+	// 			</View>
+
+	// 			<View style={styles.bottomBox}>
+	// 				<Text>Bottom</Text>
+	// 			</View>
+	// 		</View>
+	// 	);
+	// }
 }
+
+// set the styles
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: 'space-between',
+	},
+	buttonBox: {
+		backgroundColor: 'green',
+		height: 45,
+	},
+	cocktailCardView: {
+		flex: 1,
+		backgroundColor: 'red',
+	},
+	bottomBox: {
+		backgroundColor: 'blue',
+		height: 100,
+	},
+
+	// buttonBox: {
+	// 	backgroundColor: 'green',
+	// 	position: 'absolute',
+	// 	top: 40,
+	// 	right: 40,
+	// 	height: 45,
+	// },
+});
