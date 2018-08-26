@@ -15,12 +15,17 @@ FS.downloadAsync(
 const db = SQLite.openDatabase('drinksDB.db');
 
 export default class RandomCocktail extends Component {
-	// define initial variables that are required
-	state = {
-		//this needs to be undefined, otherwise the CocktailCard will be loaded instantly!
-		selectedCocktail: undefined,
-		visible: false,
-	};
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			//this needs to be undefined, otherwise the CocktailCard will be loaded instantly!
+			selectedCocktail: undefined,
+			visible: false,
+		};
+
+		this.getRandomCocktail();
+	}
 
 	getGeneralCocktailInfo(cocktail) {
 		return new Promise((resolve, reject) => {
