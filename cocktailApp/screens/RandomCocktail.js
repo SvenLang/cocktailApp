@@ -110,7 +110,7 @@ export default class RandomCocktail extends Component {
 						onPress={() => this.getRandomCocktail()}
 						buttonStyle={{
 							backgroundColor: 'rgba(92, 99,216, 1)',
-							bord.-lk,erColor: 'transparent',
+							borderColor: 'transparent',
 							height: 45,
 							borderWidth: 0,
 							borderRadius: 15,
