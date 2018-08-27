@@ -43,33 +43,8 @@ export default class RandomCocktail extends Component {
 	// render what is displayed
 	render() {
 		console.log('render randomCocktail');
-		if (typeof this.state.selectedCocktail != 'undefined') {
-			return (
-				<View>
-					<View>
-						<Button
-							title="New"
-							onPress={() => this.getRandomCocktail()}
-							buttonStyle={{
-								backgroundColor: 'rgba(92, 99,216, 1)',
-								borderColor: 'transparent',
-								height: 45,
-								borderWidth: 0,
-								borderRadius: 15,
-							}}
-						/>
-					</View>
-					<View>
-						<CocktailCard
-							visible={this.state.visible}
-							cocktailToShow={this.state.selectedCocktail}
-							onRequestClose={() => this.setState({ visible: false })}
-						/>
-					</View>
-				</View>
-			);
-		} else {
-			return (
+		return (
+			<View>
 				<View>
 					<Button
 						title="New"
@@ -83,8 +58,15 @@ export default class RandomCocktail extends Component {
 						}}
 					/>
 				</View>
-			);
-		}
+				<View>
+					<CocktailCard
+						visible={this.state.visible}
+						cocktailToShow={this.state.selectedCocktail}
+						onRequestClose={() => this.setState({ visible: false })}
+					/>
+				</View>
+			</View>
+		);
 	}
 
 	// set the styles
