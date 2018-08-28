@@ -29,7 +29,7 @@ export default class RandomCocktail extends Component {
 	}
 
 	getRandomCocktail() {
-		cocktail = db_getRandomCocktail()
+		db_getRandomCocktail()
 			.then(cocktail => {
 				console.log(cocktail);
 				this.setState({ visible: true, selectedCocktail: cocktail });
