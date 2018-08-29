@@ -76,7 +76,7 @@ export const db_getRandomCocktail = () => {
 			.then(cocktail => {
 				sql_fillCocktailWithIngredients(cocktail)
 					.then(cocktail => {
-						console.log(cocktail);
+						//console.log(cocktail);
 						resolve(cocktail);
 					})
 					.catch(error => {
