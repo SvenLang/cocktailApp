@@ -8,13 +8,9 @@ export default class Quiz extends React.Component {
 		super(props);
 		this.state = {
 			error: false,
-			quizSolution: {
-				thumbnail: undefined,
-				id: 0,
-				answers: [],
-			},
+			quizSolution: undefined,
 			visible: false,
-
+			displayGameData: false,
 			buttonStyle0: styles.buttonStyle_normal,
 			buttonStyle1: styles.buttonStyle_normal,
 			buttonStyle2: styles.buttonStyle_normal,
@@ -24,52 +20,68 @@ export default class Quiz extends React.Component {
 		this.generateQuizData();
 	}
 
-	generateQuizData() {
-		let maxRetries = 3;
-		var quizSolution = {
-			thumbnail: undefined,
-			id: 0,
-			answers: [],
-		};
+	getRandomCocktail(tries) {
+		tries = tries || 0;
+		if (tries > 3) {
+			throw new Error('Too many tries to get a random cocktail');
+		}
 
-		// generate the correct Solution between 1 and 4
-		var correctSolution = Math.floor(Math.random() * 4 + 1);
-
-		// collect the promises and only move on, if the promises have been fulfilled
-		var promises = [];
-
-		//request 4 random Cocktails asynchronously
-		for (let i = 0; i < 4; i++) {
-			var promise = db_getRandomCocktail()
+		return new Promise((resolve, reject) => {
+			db_getRandomCocktail()
 				.then(cocktail => {
-					quizSolution.answers.push(cocktail.name);
-					if (i === correctSolution) {
-						if(cocktail.drinkThumb === undefined) {
-							//get another Cocktail that has a thumbnail attached!
-							i--;
-							continue;
-						} else {
-							quizSolution.id = i;
-							quizSolution.thumbnail = cocktail.drinkThumb;
-						}
-					}
+					resolve(cocktail);
 				})
 				.catch(error => {
 					console.log(error);
-					//if an error happens, try to load another Cocktail max. 3 times
-					if (maxRetries > 0) {
-						i--;
-						maxRetries--;
-					} else {
-						this.setState({ error: true });
-					}
+					return getRandomCocktailWithID(tries + 1);
+				});
+		});
+	}
+
+	generateQuizData() {
+		let maxRetries = 3;
+		var quizSolution = {
+			id: 0,
+			answers: [],
+		};
+		// collect the promises and only move on, if the promises have been fulfilled
+		var promises = [];
+		// generate the correct Solution between 1 and 4
+		var solutionId = Math.floor(Math.random() * 4 + 1);
+
+		//request 4 random Cocktails asynchronously
+		for (let i = 0; i < 4; i++) {
+			var promise;
+			var promise = db_getRandomCocktail()
+				.then(cocktail => {
+					quizSolution.answers.push({ name: cocktail.name, thumbnail: cocktail.drinkThumb });
+				})
+				.catch(error => {
+					console.log(error);
 				});
 			promises.push(promise);
 		}
 
 		// When all promises have terminated, populate the game screen with the data
 		Promise.all(promises).then(() => {
-			this.setState({ quizSolution: quizSolution, visible: true });
+			// Check if the solution does have a thumbnail attached
+			if (typeof quizSolution.answers[quizSolution.id].thumbnail === 'undefined') {
+				//Change the solution to a cocktail that does have a thumbnail attached
+				var i = quizSolution.id === 3 ? 0 : quizSolution.id + 1;
+				do {
+					if (typeof quizSolution.answers[i].thumbnail === 'undefined') {
+						if (i === 3) {
+							i = 0;
+						} else {
+							i++;
+						}
+					} else {
+						quizSolution.id = i;
+					}
+				} while (i != quizSolution.id);
+			}
+
+			this.setState({ quizSolution: quizSolution, visible: true, displayGameData: true });
 		});
 	}
 
@@ -86,37 +98,49 @@ export default class Quiz extends React.Component {
 	}
 
 	render() {
-		console.log(this.state);
-		return (
-			<View style={styles.container}>
-				<Button title={'new'} onPress={() => this.generateQuizData()} />
-				<View visible={this.state.visible}>
-					<Card title="Quiz">
-						<Image style={styles.image} source={{ uri: this.state.quizSolution.thumbnail }} />
-						<Button
-							title={this.state.quizSolution.answers[0]}
-							buttonStyle={this.state.buttonStyle0}
-							onPress={() => this.checkSolution(0)}
-						/>
-						<Button
-							title={this.state.quizSolution.answers[1]}
-							buttonStyle={this.state.buttonStyle1}
-							onPress={() => this.checkSolution(1)}
-						/>
-						<Button
-							title={this.state.quizSolution.answers[2]}
-							buttonStyle={this.state.buttonStyle2}
-							onPress={() => this.checkSolution(2)}
-						/>
-						<Button
-							title={this.state.quizSolution.answers[3]}
-							buttonStyle={this.state.buttonStyle3}
-							onPress={() => this.checkSolution(3)}
-						/>
-					</Card>
+		console.log(this.state.quizSolution);
+
+		if (this.state.displayGameData) {
+			return (
+				<View style={styles.container}>
+					<Button title={'new'} onPress={() => this.generateQuizData()} />
+					<View visible={this.state.visible}>
+						<Card title="Quiz">
+							<Image
+								style={styles.image}
+								source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
+							/>
+							<Button
+								title={this.state.quizSolution.answers[0].name}
+								buttonStyle={this.state.buttonStyle0}
+								onPress={() => this.checkSolution(0)}
+							/>
+							<Button
+								title={this.state.quizSolution.answers[1].name}
+								buttonStyle={this.state.buttonStyle1}
+								onPress={() => this.checkSolution(1)}
+							/>
+							<Button
+								title={this.state.quizSolution.answers[2].name}
+								buttonStyle={this.state.buttonStyle2}
+								onPress={() => this.checkSolution(2)}
+							/>
+							<Button
+								title={this.state.quizSolution.answers[3].name}
+								buttonStyle={this.state.buttonStyle3}
+								onPress={() => this.checkSolution(3)}
+							/>
+						</Card>
+					</View>
 				</View>
-			</View>
-		);
+			);
+		} else {
+			return (
+				<View style={styles.container}>
+					<Button title={'new'} onPress={() => this.generateQuizData()} />
+				</View>
+			);
+		}
 	}
 }
 
@@ -130,21 +154,21 @@ const styles = StyleSheet.create({
 	buttonStyle_normal: {
 		backgroundColor: 'rgba(92, 99,216, 1)',
 		borderColor: 'transparent',
-		height: 45,
+		height: 30,
 		borderWidth: 0,
 		borderRadius: 15,
 	},
 	buttonStyle_success: {
 		backgroundColor: 'rgba(130, 250, 100, 1)',
 		borderColor: 'transparent',
-		height: 45,
+		height: 30,
 		borderWidth: 0,
 		borderRadius: 15,
 	},
 	buttonStyle_error: {
 		backgroundColor: 'rgba(210, 50, 50, 1)',
 		borderColor: 'transparent',
-		height: 45,
+		height: 30,
 		borderWidth: 0,
 		borderRadius: 15,
 	},
