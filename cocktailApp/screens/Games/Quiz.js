@@ -35,6 +35,8 @@ export default class Quiz extends React.Component {
 				});
 			})
 			.catch(error => {
+				console.log('NewGameError:' + error);
+
 				//display an error message
 				this.setState({
 					error: error,
@@ -44,24 +46,6 @@ export default class Quiz extends React.Component {
 	}
 
 	newRound() {}
-
-	getRandomCocktail(tries) {
-		tries = tries || 0;
-		if (tries > 3) {
-			throw new Error('Too many tries to get a random cocktail');
-		}
-
-		return new Promise((resolve, reject) => {
-			db_getRandomCocktail()
-				.then(cocktail => {
-					resolve(cocktail);
-				})
-				.catch(error => {
-					console.log(error);
-					return getRandomCocktailWithID(tries + 1);
-				});
-		});
-	}
 
 	generateQuizData() {
 		return new Promise((resolve, reject) => {
@@ -73,7 +57,7 @@ export default class Quiz extends React.Component {
 			// collect the promises and only move on, if the promises have been fulfilled
 			var promises = [];
 			// generate the correct Solution between 1 and 4
-			var solutionId = Math.floor(Math.random() * 4 + 1);
+			quizSolution.id = Math.floor(Math.random() * 4 + 1);
 
 			//request 4 random Cocktails asynchronously
 			for (let i = 0; i < 4; i++) {
@@ -92,6 +76,7 @@ export default class Quiz extends React.Component {
 			// When all promises have terminated, populate the game screen with the data
 			Promise.all(promises)
 				.then(() => {
+					console.log(quizSolution);
 					// Check if the solution does have a thumbnail attached
 					if (typeof quizSolution.answers[quizSolution.id].thumbnail === 'undefined') {
 						//Change the solution to a cocktail that does have a thumbnail attached
@@ -109,7 +94,6 @@ export default class Quiz extends React.Component {
 						} while (i != quizSolution.id);
 					}
 					resolve(quizSolution);
-					//this.setState({ quizSolution: quizSolution, visible: true, displayGameData: true });
 				})
 				.catch(error => {
 					console.log('Unable to generate quiz data: ' + error);
