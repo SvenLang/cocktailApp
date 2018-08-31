@@ -7,7 +7,7 @@ export default class Quiz extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			error: false,
+			error: '',
 			quizSolution: undefined,
 			visible: false,
 			displayGameData: false,
@@ -17,8 +17,33 @@ export default class Quiz extends React.Component {
 			buttonStyle3: styles.buttonStyle_normal,
 		};
 
-		this.generateQuizData();
+		this.newGame();
 	}
+
+	newGame() {
+		//get the game data
+		this.generateQuizData()
+			.then(quizSolution => {
+				//With the data ready, populate the board
+				this.setState({
+					quizSolution: quizSolution,
+					displayGameData: true,
+					buttonStyle0: styles.buttonStyle_normal,
+					buttonStyle1: styles.buttonStyle_normal,
+					buttonStyle2: styles.buttonStyle_normal,
+					buttonStyle3: styles.buttonStyle_normal,
+				});
+			})
+			.catch(error => {
+				//display an error message
+				this.setState({
+					error: error,
+					displayGameData: false,
+				});
+			});
+	}
+
+	newRound() {}
 
 	getRandomCocktail(tries) {
 		tries = tries || 0;
@@ -39,49 +64,57 @@ export default class Quiz extends React.Component {
 	}
 
 	generateQuizData() {
-		let maxRetries = 3;
-		var quizSolution = {
-			id: 0,
-			answers: [],
-		};
-		// collect the promises and only move on, if the promises have been fulfilled
-		var promises = [];
-		// generate the correct Solution between 1 and 4
-		var solutionId = Math.floor(Math.random() * 4 + 1);
+		return new Promise((resolve, reject) => {
+			let maxRetries = 3;
+			var quizSolution = {
+				id: 0,
+				answers: [],
+			};
+			// collect the promises and only move on, if the promises have been fulfilled
+			var promises = [];
+			// generate the correct Solution between 1 and 4
+			var solutionId = Math.floor(Math.random() * 4 + 1);
 
-		//request 4 random Cocktails asynchronously
-		for (let i = 0; i < 4; i++) {
-			var promise;
-			var promise = db_getRandomCocktail()
-				.then(cocktail => {
-					quizSolution.answers.push({ name: cocktail.name, thumbnail: cocktail.drinkThumb });
-				})
-				.catch(error => {
-					console.log(error);
-				});
-			promises.push(promise);
-		}
-
-		// When all promises have terminated, populate the game screen with the data
-		Promise.all(promises).then(() => {
-			// Check if the solution does have a thumbnail attached
-			if (typeof quizSolution.answers[quizSolution.id].thumbnail === 'undefined') {
-				//Change the solution to a cocktail that does have a thumbnail attached
-				var i = quizSolution.id === 3 ? 0 : quizSolution.id + 1;
-				do {
-					if (typeof quizSolution.answers[i].thumbnail === 'undefined') {
-						if (i === 3) {
-							i = 0;
-						} else {
-							i++;
-						}
-					} else {
-						quizSolution.id = i;
-					}
-				} while (i != quizSolution.id);
+			//request 4 random Cocktails asynchronously
+			for (let i = 0; i < 4; i++) {
+				var promise;
+				var promise = db_getRandomCocktail()
+					.then(cocktail => {
+						quizSolution.answers.push({ name: cocktail.name, thumbnail: cocktail.drinkThumb });
+					})
+					.catch(error => {
+						console.log(error);
+						reject(error);
+					});
+				promises.push(promise);
 			}
 
-			this.setState({ quizSolution: quizSolution, visible: true, displayGameData: true });
+			// When all promises have terminated, populate the game screen with the data
+			Promise.all(promises)
+				.then(() => {
+					// Check if the solution does have a thumbnail attached
+					if (typeof quizSolution.answers[quizSolution.id].thumbnail === 'undefined') {
+						//Change the solution to a cocktail that does have a thumbnail attached
+						var i = quizSolution.id === 3 ? 0 : quizSolution.id + 1;
+						do {
+							if (typeof quizSolution.answers[i].thumbnail === 'undefined') {
+								if (i === 3) {
+									i = 0;
+								} else {
+									i++;
+								}
+							} else {
+								quizSolution.id = i;
+							}
+						} while (i != quizSolution.id);
+					}
+					resolve(quizSolution);
+					//this.setState({ quizSolution: quizSolution, visible: true, displayGameData: true });
+				})
+				.catch(error => {
+					console.log('Unable to generate quiz data: ' + error);
+					reject(error);
+				});
 		});
 	}
 
@@ -103,41 +136,40 @@ export default class Quiz extends React.Component {
 		if (this.state.displayGameData) {
 			return (
 				<View style={styles.container}>
-					<Button title={'new'} onPress={() => this.generateQuizData()} />
+					<Button title={'new'} onPress={() => this.newGame()} />
 					<View visible={this.state.visible}>
-						<Card title="Quiz">
-							<Image
-								style={styles.image}
-								source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
-							/>
-							<Button
-								title={this.state.quizSolution.answers[0].name}
-								buttonStyle={this.state.buttonStyle0}
-								onPress={() => this.checkSolution(0)}
-							/>
-							<Button
-								title={this.state.quizSolution.answers[1].name}
-								buttonStyle={this.state.buttonStyle1}
-								onPress={() => this.checkSolution(1)}
-							/>
-							<Button
-								title={this.state.quizSolution.answers[2].name}
-								buttonStyle={this.state.buttonStyle2}
-								onPress={() => this.checkSolution(2)}
-							/>
-							<Button
-								title={this.state.quizSolution.answers[3].name}
-								buttonStyle={this.state.buttonStyle3}
-								onPress={() => this.checkSolution(3)}
-							/>
-						</Card>
+						<Image
+							style={styles.image}
+							source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
+						/>
+						<Button
+							title={this.state.quizSolution.answers[0].name}
+							buttonStyle={this.state.buttonStyle0}
+							onPress={() => this.checkSolution(0)}
+						/>
+						<Button
+							title={this.state.quizSolution.answers[1].name}
+							buttonStyle={this.state.buttonStyle1}
+							onPress={() => this.checkSolution(1)}
+						/>
+						<Button
+							title={this.state.quizSolution.answers[2].name}
+							buttonStyle={this.state.buttonStyle2}
+							onPress={() => this.checkSolution(2)}
+						/>
+						<Button
+							title={this.state.quizSolution.answers[3].name}
+							buttonStyle={this.state.buttonStyle3}
+							onPress={() => this.checkSolution(3)}
+						/>
 					</View>
 				</View>
 			);
 		} else {
 			return (
 				<View style={styles.container}>
-					<Button title={'new'} onPress={() => this.generateQuizData()} />
+					<Button title={'new'} onPress={() => this.newGame()} />
+					<Text>{this.state.error}</Text>
 				</View>
 			);
 		}
