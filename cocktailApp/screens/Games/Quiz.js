@@ -1,9 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { db_getRandomCocktail } from '../../utils/StorageHelper';
-import { Button, Card } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 
 export default class Quiz extends React.Component {
+	/**
+	 * Called upon clicking on the navigation tab of the quiz game.
+	 * Initializes the state with the default values and starts a new game.
+	 * At the moment, there are no properties that are passed along.
+	 */
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -11,6 +16,7 @@ export default class Quiz extends React.Component {
 			quizSolution: undefined,
 			visible: false,
 			displayGameData: false,
+			points: 0,
 			buttonStyle0: styles.buttonStyle_normal,
 			buttonStyle1: styles.buttonStyle_normal,
 			buttonStyle2: styles.buttonStyle_normal,
@@ -20,7 +26,43 @@ export default class Quiz extends React.Component {
 		this.newGame();
 	}
 
+	/**
+	 * Generating a new dataset for the quiz while resetting the buttons, points
+	 * etc. are all reset to their default start values.
+	 * Requested explicitly upon clicking on the 'New Game' button.
+	 */
 	newGame() {
+		//get the game data
+		this.generateQuizData()
+			.then(quizSolution => {
+				//With the data ready, populate the board
+				this.setState({
+					quizSolution: quizSolution,
+					displayGameData: true,
+					points: 0,
+					buttonStyle0: styles.buttonStyle_normal,
+					buttonStyle1: styles.buttonStyle_normal,
+					buttonStyle2: styles.buttonStyle_normal,
+					buttonStyle3: styles.buttonStyle_normal,
+				});
+			})
+			.catch(error => {
+				console.log('NewGameError:' + error);
+
+				//display an error message
+				this.setState({
+					error: error,
+					displayGameData: false,
+				});
+			});
+	}
+
+	/**
+	 * As with the newGame function this generates a new dataset and resets the button colors,
+	 * however the points are not reset, as the game is still considered to be ongoing.
+	 * Invoked automatically as soon as an answer was provided.
+	 */
+	newRound() {
 		//get the game data
 		this.generateQuizData()
 			.then(quizSolution => {
@@ -45,26 +87,31 @@ export default class Quiz extends React.Component {
 			});
 	}
 
-	newRound() {}
-
+	/**
+	 * Generates a new set of quiz data by requesting for random cocktails and storing them
+	 * in the correct format. Also automatically sets the new correct solution.
+	 */
 	generateQuizData() {
 		return new Promise((resolve, reject) => {
-			let maxRetries = 3;
 			var quizSolution = {
 				id: 0,
 				answers: [],
 			};
 			// collect the promises and only move on, if the promises have been fulfilled
 			var promises = [];
-			// generate the correct Solution between 1 and 4
-			quizSolution.id = Math.floor(Math.random() * 4 + 1);
+			// generate the correct Solution between 0 and 3
+			quizSolution.id = Math.floor(Math.random() * 4);
 
 			//request 4 random Cocktails asynchronously
 			for (let i = 0; i < 4; i++) {
 				var promise;
 				var promise = db_getRandomCocktail()
 					.then(cocktail => {
-						quizSolution.answers.push({ name: cocktail.name, thumbnail: cocktail.drinkThumb });
+						quizSolution.answers.push({
+							name: cocktail.name,
+							thumbnail: cocktail.drinkThumb,
+							instructions: cocktail.instructions,
+						});
 					})
 					.catch(error => {
 						console.log(error);
@@ -76,9 +123,13 @@ export default class Quiz extends React.Component {
 			// When all promises have terminated, populate the game screen with the data
 			Promise.all(promises)
 				.then(() => {
-					console.log(quizSolution);
+					console.log(
+						'Generated data from random cocktails, evaluate thumbnail:' + JSON.stringify(quizSolution)
+					);
 					// Check if the solution does have a thumbnail attached
 					if (typeof quizSolution.answers[quizSolution.id].thumbnail === 'undefined') {
+						console.log('Thumbnail not found');
+
 						//Change the solution to a cocktail that does have a thumbnail attached
 						var i = quizSolution.id === 3 ? 0 : quizSolution.id + 1;
 						do {
@@ -102,17 +153,38 @@ export default class Quiz extends React.Component {
 		});
 	}
 
+	/**
+	 * Check a given answer for correctness.
+	 * @param {*} id ID of the solution (=Id of the button), to check the answer for validity
+	 */
 	checkSolution(id) {
+		//change the color of the pressed button depending on the answers and count / reset the points
 		if (id === this.state.quizSolution.id) {
+			//automatically load a new round after 3 seconds
+			setTimeout(() => {
+				this.newRound();
+			}, 3000);
+
 			this.setState({
+				//dynamic generation of the button style names
 				['buttonStyle' + id]: styles.buttonStyle_success,
+				points: this.state.points + 1,
 			});
 		} else {
 			this.setState({
 				['buttonStyle' + id]: styles.buttonStyle_error,
+				points: 0,
 			});
 		}
 	}
+
+	hint() {}
+
+	joker() {}
+
+	renderWelcomePage() {}
+
+	renderGamePage() {}
 
 	render() {
 		console.log(this.state.quizSolution);
@@ -120,7 +192,10 @@ export default class Quiz extends React.Component {
 		if (this.state.displayGameData) {
 			return (
 				<View style={styles.container}>
-					<Button title={'new'} onPress={() => this.newGame()} />
+					<TouchableOpacity onPress={() => this.newGame()}>
+						<Text>New Game</Text>
+					</TouchableOpacity>
+
 					<View visible={this.state.visible}>
 						<Image
 							style={styles.image}
