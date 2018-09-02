@@ -4,6 +4,25 @@ import { db_getRandomCocktail } from '../../utils/StorageHelper';
 import { Button } from 'react-native-elements';
 
 export default class Quiz extends React.Component {
+	buttonSettings_default = [
+		{
+			style: styles.buttonStyle_normal,
+			disabled: false,
+		},
+		{
+			style: styles.buttonStyle_normal,
+			disabled: false,
+		},
+		{
+			style: styles.buttonStyle_normal,
+			disabled: false,
+		},
+		{
+			style: styles.buttonStyle_normal,
+			disabled: false,
+		},
+	];
+
 	/**
 	 * Called upon clicking on the navigation tab of the quiz game.
 	 * Initializes the state with the default values and starts a new game.
@@ -17,6 +36,7 @@ export default class Quiz extends React.Component {
 			visible: false,
 			displayGameData: false,
 			points: 0,
+			buttonSettings: this.buttonSettings_default,
 			buttonStyle0: styles.buttonStyle_normal,
 			buttonStyle1: styles.buttonStyle_normal,
 			buttonStyle2: styles.buttonStyle_normal,
@@ -168,11 +188,13 @@ export default class Quiz extends React.Component {
 			this.setState({
 				//dynamic generation of the button style names
 				['buttonStyle' + id]: styles.buttonStyle_success,
+				['buttonSettings[' + id + '].style']: styles.buttonStyle_success,
 				points: this.state.points + 1,
 			});
 		} else {
 			this.setState({
 				['buttonStyle' + id]: styles.buttonStyle_error,
+				['buttonSettings[' + id + '].style']: styles.buttonStyle_error,
 				points: 0,
 			});
 		}
@@ -203,7 +225,7 @@ export default class Quiz extends React.Component {
 						/>
 						<Button
 							title={this.state.quizSolution.answers[0].name}
-							buttonStyle={this.state.buttonStyle0}
+							buttonStyle={this.state.buttonSettings[0].style}
 							onPress={() => this.checkSolution(0)}
 						/>
 						<Button
