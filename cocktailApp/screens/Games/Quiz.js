@@ -193,10 +193,19 @@ export default class Quiz extends React.Component {
 		}
 	}
 
-	hint() {}
+	/**
+	 * Provides a hint of the correct answer at the cost of a point.
+	 */
+	hint() {
+		alert('Hint: ' + this.state.quizSolution.answers[this.state.quizSolution.id].instructions);
+		this.setState({
+			points: this.state.points - 1,
+		});
+	}
 
 	/**
-	 * Joker for t he quiz. Randomly disables one possible answer and decreases the point count by 2.
+	 * Joker for t he quiz. Randomly disables one possible answer and decreases
+	 * the point count by 2.
 	 */
 	joker() {
 		//Store the old array of already disabled buttons
@@ -212,18 +221,21 @@ export default class Quiz extends React.Component {
 		//Array of remaining IDs that represent disableable buttons
 		let remainingIds = buttonIdRange.filter(x => !unavailableIds.includes(x));
 
-		//randomly disable one wrong answer
-		let disable_id = remainingIds[Math.floor(Math.random() * remainingIds.length)];
+		//Only allow the use of the joker, if there are still wrong answers to eliminate
+		if (remainingIds.length > 1) {
+			//randomly disable one wrong answer
+			let disable_id = remainingIds[Math.floor(Math.random() * remainingIds.length)];
 
-		//store that this button has been disabled
-		disabledButtonIDsCopy.push(disable_id);
+			//store that this button has been disabled
+			disabledButtonIDsCopy.push(disable_id);
 
-		this.setState({
-			['button' + disable_id + '_style']: styles.buttonStyle_disabled,
-			['button' + disable_id + '_disabled']: true,
-			disabled_buttonIds: disabledButtonIDsCopy,
-			points: this.state.points - 2,
-		});
+			this.setState({
+				['button' + disable_id + '_style']: styles.buttonStyle_disabled,
+				['button' + disable_id + '_disabled']: true,
+				disabled_buttonIds: disabledButtonIDsCopy,
+				points: this.state.points - 2,
+			});
+		}
 	}
 
 	renderWelcomePage() {}
@@ -236,22 +248,27 @@ export default class Quiz extends React.Component {
 		if (this.state.displayGameData) {
 			return (
 				<View style={styles.container}>
+					{/* <ImageBackground
+						source={require('../../assets/images/MaexleBackground2.jpg')}
+						style={{ width: '100%', height: '100%' }}
+					/> */}
+
 					<View style={styles.topbar}>
 						<View style={styles.topbarElement}>
-							<TouchableOpacity onPress={() => this.newGame()}>
-								<Text>New</Text>
-							</TouchableOpacity>
+							<Button title={'New'} onPress={() => this.newGame()} />
 						</View>
-					</View>
-					<View style={styles.topbar}>
 						<View style={styles.topbarElement}>
-							<TouchableOpacity onPress={() => this.joker()}>
-								<Text>Joker</Text>
-							</TouchableOpacity>
+							<Button title={'Joker'} onPress={() => this.joker()} />
+						</View>
+						<View style={styles.topbarElement}>
+							<Button title={'Hint'} onPress={() => this.hint()} />
+						</View>
+						<View style={styles.topbarElement}>
+							<Text>{this.state.points}</Text>
 						</View>
 					</View>
 
-					<View visible={this.state.visible}>
+					<View visible={this.state.visible} style={{ flexDirection: 'column' }}>
 						<Image
 							style={styles.image}
 							source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
@@ -296,9 +313,13 @@ export default class Quiz extends React.Component {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#fff',
+		flexDirection: 'column',
+		paddingTop: 30,
+		backgroundColor: '#ffd',
 	},
 	topbar: {
+		flex: 1,
+		height: 30,
 		flexDirection: 'row',
 	},
 	topbarElement: {
@@ -340,6 +361,7 @@ const styles = StyleSheet.create({
 		width: 180,
 		height: 180,
 		alignSelf: 'center',
-		marginBottom: 10,
+		margin: 10,
+		flex: 1,
 	},
 });
