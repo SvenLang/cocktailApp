@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, ImageBackground } from 'react-native';
+import { StyleSheet, View, Image, ImageBackground } from 'react-native';
 import { db_getRandomCocktail } from '../../utils/StorageHelper';
-import { Button } from 'react-native-elements';
+//import { Button } from 'react-native-elements';
+import { Container, Header, Title, Content, Button, Icon, Left, Right, Body, Text } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
+import { Font, AppLoading } from 'expo';
 
 export default class Quiz extends React.Component {
 	/**
@@ -27,9 +29,18 @@ export default class Quiz extends React.Component {
 			button2_disabled: false,
 			button3_disabled: false,
 			disabled_buttonIds: [],
+			loading: true,
 		};
 
 		this.newGame();
+	}
+
+	async componentWillMount() {
+		await Font.loadAsync({
+			Roboto: require('native-base/Fonts/Roboto.ttf'),
+			Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+		});
+		this.setState({ loading: false });
 	}
 
 	/**
@@ -248,175 +259,124 @@ export default class Quiz extends React.Component {
 		);
 	}
 
-	renderGamePage() {
+	renderGamePage2() {
 		return (
 			<View style={{ height: '100%' }}>
-				<Grid>
-					<Row size={15}>
-						<Col>
-							<Button title={'New'} onPress={() => this.newGame()} />
-						</Col>
-						<Col>
-							<Button title={'Joker'} onPress={() => this.joker()} />
-						</Col>
-						<Col>
-							<Button title={'Hint'} onPress={() => this.hint()} />
-						</Col>
-						<Col>
-							<Text>{this.state.points}</Text>
-						</Col>
-					</Row>
-					<Row size={50}>
-						<Image
-							style={styles.image}
-							source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
-						/>
-					</Row>
-					<Row size={35}>
-						<Row>
-							<Col>
-								<Button
-									title={this.state.quizSolution.answers[0].name}
-									buttonStyle={this.state.button0_style}
-									disabled={this.state.button0_disabled}
-									onPress={() => this.checkSolution(0)}
+				<Container style={styles.container}>
+					<Content>
+						<Grid>
+							<Row size={1} style={{ backgroundColor: '#DD9e2c' }}>
+								<Button iconLeft primary style={{ width: '25%' }} onPress={() => this.newGame()}>
+									<Icon name="help" />
+									<Text>New</Text>
+								</Button>
+								<Button primary style={{ width: '25%' }} onPress={() => this.joker()}>
+									<Text>Joker</Text>
+								</Button>
+								<Button primary style={{ width: '25%' }} onPress={() => this.hint()}>
+									<Text>Hint</Text>
+								</Button>
+							</Row>
+							<Row size={4} style={{ backgroundColor: '#11CE9F' }}>
+								<Image
+									style={styles.image}
+									source={{
+										uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail,
+									}}
 								/>
-							</Col>
-							<Col>
-								<Button
-									title={this.state.quizSolution.answers[1].name}
-									buttonStyle={this.state.button1_style}
-									disabled={this.state.button1_disabled}
-									onPress={() => this.checkSolution(1)}
-								/>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<Button
-									title={this.state.quizSolution.answers[2].name}
-									buttonStyle={this.state.button2_style}
-									disabled={this.state.button2_disabled}
-									onPress={() => this.checkSolution(2)}
-								/>
-							</Col>
-							<Col>
-								<Button
-									title={this.state.quizSolution.answers[3].name}
-									buttonStyle={this.state.button3_style}
-									disabled={this.state.button3_disabled}
-									onPress={() => this.checkSolution(3)}
-								/>
-							</Col>
-						</Row>
-					</Row>
-				</Grid>
+							</Row>
+							<Row size={3} style={{ backgroundColor: '#635db7' }}>
+								<Text>Some more button here</Text>
+							</Row>
+						</Grid>
+					</Content>
+				</Container>
 			</View>
+		);
+	}
+
+	renderGamePage() {
+		return (
+			<Grid style={{ height: '100%' }}>
+				<Row size={15}>
+					<Col>
+						<Button title={'New'} onPress={() => this.newGame()} />
+					</Col>
+					<Col>
+						<Button title={'Joker'} onPress={() => this.joker()} />
+					</Col>
+					<Col>
+						<Button title={'Hint'} onPress={() => this.hint()} />
+					</Col>
+					<Col>
+						<Text>{this.state.points}</Text>
+					</Col>
+				</Row>
+				<Row size={50}>
+					<Image
+						style={styles.image}
+						source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
+					/>
+				</Row>
+				<Row size={35}>
+					<Row>
+						<Col>
+							<Button
+								title={this.state.quizSolution.answers[0].name}
+								buttonStyle={this.state.button0_style}
+								disabled={this.state.button0_disabled}
+								onPress={() => this.checkSolution(0)}
+							/>
+						</Col>
+						<Col>
+							<Button
+								title={this.state.quizSolution.answers[1].name}
+								buttonStyle={this.state.button1_style}
+								disabled={this.state.button1_disabled}
+								onPress={() => this.checkSolution(1)}
+							/>
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<Button
+								title={this.state.quizSolution.answers[2].name}
+								buttonStyle={this.state.button2_style}
+								disabled={this.state.button2_disabled}
+								onPress={() => this.checkSolution(2)}
+							/>
+						</Col>
+						<Col>
+							<Button
+								title={this.state.quizSolution.answers[3].name}
+								buttonStyle={this.state.button3_style}
+								disabled={this.state.button3_disabled}
+								onPress={() => this.checkSolution(3)}
+							/>
+						</Col>
+					</Row>
+				</Row>
+			</Grid>
 		);
 	}
 
 	render() {
 		console.log(this.state.quizSolution);
 
-		if (this.state.displayGameData) {
-			return this.renderGamePage();
-		} else {
+		if (this.state.loading) {
 			return this.renderWelcomePage();
-		}
-	}
-
-	renderWithTraditionalFlex() {
-		console.log(this.state.quizSolution);
-
-		if (this.state.displayGameData) {
-			return (
-				<View style={styles.container}>
-					{/* <ImageBackground
-						source={require('../../assets/images/MaexleBackground2.jpg')}
-						style={{ width: '100%', height: '100%' }}
-					/> */}
-
-					<View style={styles.topbar}>
-						<View style={styles.topbarElement}>
-							<Button title={'New'} onPress={() => this.newGame()} />
-						</View>
-						<View style={styles.topbarElement}>
-							<Button title={'Joker'} onPress={() => this.joker()} />
-						</View>
-						<View style={styles.topbarElement}>
-							<Button title={'Hint'} onPress={() => this.hint()} />
-						</View>
-						<View style={styles.topbarElement}>
-							<Text>{this.state.points}</Text>
-						</View>
-					</View>
-
-					<View
-						visible={this.state.visible}
-						style={{ flexDirection: 'column', justifyContent: 'space-between', flex: 5 }}
-					>
-						<View style={{ flex: 3, margin: 5 }}>
-							<Image
-								style={styles.image}
-								source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
-							/>
-						</View>
-
-						<View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
-							<View>
-								<Button
-									title={this.state.quizSolution.answers[0].name}
-									buttonStyle={this.state.button0_style}
-									disabled={this.state.button0_disabled}
-									onPress={() => this.checkSolution(0)}
-								/>
-							</View>
-							<View>
-								<Button
-									title={this.state.quizSolution.answers[1].name}
-									buttonStyle={this.state.button1_style}
-									disabled={this.state.button1_disabled}
-									onPress={() => this.checkSolution(1)}
-								/>
-							</View>
-						</View>
-
-						<View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
-							<View>
-								<Button
-									title={this.state.quizSolution.answers[2].name}
-									buttonStyle={this.state.button2_style}
-									disabled={this.state.button2_disabled}
-									onPress={() => this.checkSolution(2)}
-								/>
-							</View>
-							<View>
-								<Button
-									title={this.state.quizSolution.answers[3].name}
-									buttonStyle={this.state.button3_style}
-									disabled={this.state.button3_disabled}
-									onPress={() => this.checkSolution(3)}
-								/>
-							</View>
-						</View>
-					</View>
-				</View>
-			);
 		} else {
-			return (
-				<View style={styles.container}>
-					<Button title={'new'} onPress={() => this.newGame()} />
-					<Text>{this.state.error}</Text>
-				</View>
-			);
+			if (this.state.displayGameData) {
+				return this.renderGamePage2();
+			} else {
+				return this.renderWelcomePage();
+			}
 		}
 	}
 }
 
 const styles = StyleSheet.create({
 	container: {
-		flexDirection: 'column',
-		paddingTop: 30,
 		backgroundColor: '#ffd',
 	},
 	topbar: {
@@ -432,7 +392,6 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(92, 99,216, 1)',
 		borderColor: 'transparent',
 		height: 30,
-		width: '40%',
 		margin: 2,
 		borderWidth: 0,
 		borderRadius: 15,
@@ -441,7 +400,6 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(130, 250, 100, 1)',
 		borderColor: 'transparent',
 		height: 30,
-		width: '40%',
 		margin: 2,
 		borderWidth: 0,
 		borderRadius: 15,
@@ -450,7 +408,6 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(210, 50, 50, 1)',
 		borderColor: 'transparent',
 		height: 30,
-		width: '40%',
 		margin: 2,
 		borderWidth: 0,
 		borderRadius: 15,
@@ -459,7 +416,6 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(200, 200, 200, 1)',
 		borderColor: 'transparent',
 		height: 30,
-		width: '40%',
 		margin: 2,
 		borderWidth: 0,
 		borderRadius: 15,
