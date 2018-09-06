@@ -2,7 +2,21 @@ import React from 'react';
 import { StyleSheet, View, Image, ImageBackground } from 'react-native';
 import { db_getRandomCocktail } from '../../utils/StorageHelper';
 //import { Button } from 'react-native-elements';
-import { Container, Header, Title, Content, Button, Icon, Left, Right, Body, Text } from 'native-base';
+import {
+	Container,
+	Header,
+	Title,
+	Content,
+	Button,
+	Icon,
+	Left,
+	Right,
+	Body,
+	Text,
+	Card,
+	CardItem,
+	Thumbnail,
+} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font, AppLoading } from 'expo';
 
@@ -266,27 +280,73 @@ export default class Quiz extends React.Component {
 					<Content>
 						<Grid>
 							<Row size={1} style={{ backgroundColor: '#DD9e2c' }}>
-								<Button iconLeft primary style={{ width: '25%' }} onPress={() => this.newGame()}>
-									<Icon name="help" />
+								<Button iconLeft primary onPress={() => this.newGame()}>
+									<Icon name="md-refresh" />
 									<Text>New</Text>
 								</Button>
-								<Button primary style={{ width: '25%' }} onPress={() => this.joker()}>
+								<Button iconLeft primary onPress={() => this.joker()}>
+									<Icon name="heart" />
 									<Text>Joker</Text>
 								</Button>
-								<Button primary style={{ width: '25%' }} onPress={() => this.hint()}>
+								<Button iconLeft primary onPress={() => this.hint()}>
+									<Icon name="help" />
 									<Text>Hint</Text>
 								</Button>
+								<Text>{this.state.points}</Text>
 							</Row>
-							<Row size={4} style={{ backgroundColor: '#11CE9F' }}>
-								<Image
-									style={styles.image}
-									source={{
-										uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail,
-									}}
-								/>
-							</Row>
-							<Row size={3} style={{ backgroundColor: '#635db7' }}>
-								<Text>Some more button here</Text>
+							<Row style={{ backgroundColor: '#11CE9F', alignContent: 'center', alignItems: 'center' }}>
+								<Body>
+									<Card style={{ width: '90%', alignContent: 'center', alignItems: 'center' }}>
+										<CardItem bordered>
+											<Left>
+												<Icon name="md-wine" />
+												<Body>
+													<Text>Cocktail-Quiz</Text>
+													<Text note>Which cocktail is displayed below?</Text>
+												</Body>
+											</Left>
+										</CardItem>
+										<CardItem
+											cardBody
+											bordered
+											style={{ alignContent: 'center', alignItems: 'center' }}
+										>
+											<Image
+												style={styles.image}
+												source={{
+													uri: this.state.quizSolution.answers[this.state.quizSolution.id]
+														.thumbnail,
+												}}
+											/>
+										</CardItem>
+										<CardItem bordered>
+											<Grid style={{ margin: 5 }}>
+												<Row>
+													<Col style={{ alignItems: 'center' }}>
+														<Button
+															rounded
+															style={this.state.button0_style}
+															onPress={() => this.checkSolution(0)}
+														>
+															<Text>{this.state.quizSolution.answers[0].name}</Text>
+														</Button>
+													</Col>
+													<Col style={{ backgroundColor: '#aaaa00' }}>
+														<Text>B</Text>
+													</Col>
+												</Row>
+												<Row>
+													<Col style={{ backgroundColor: '#aa00aa' }}>
+														<Text>C</Text>
+													</Col>
+													<Col style={{ backgroundColor: '#00aaaa' }}>
+														<Text>D</Text>
+													</Col>
+												</Row>
+											</Grid>
+										</CardItem>
+									</Card>
+								</Body>
 							</Row>
 						</Grid>
 					</Content>
@@ -391,39 +451,30 @@ const styles = StyleSheet.create({
 	buttonStyle_normal: {
 		backgroundColor: 'rgba(92, 99,216, 1)',
 		borderColor: 'transparent',
-		height: 30,
 		margin: 2,
-		borderWidth: 0,
-		borderRadius: 15,
+		width: '95%',
 	},
 	buttonStyle_success: {
 		backgroundColor: 'rgba(130, 250, 100, 1)',
 		borderColor: 'transparent',
-		height: 30,
 		margin: 2,
-		borderWidth: 0,
-		borderRadius: 15,
+		width: '95%',
 	},
 	buttonStyle_error: {
 		backgroundColor: 'rgba(210, 50, 50, 1)',
 		borderColor: 'transparent',
-		height: 30,
 		margin: 2,
-		borderWidth: 0,
-		borderRadius: 15,
+		width: '95%',
 	},
 	buttonStyle_disabled: {
 		backgroundColor: 'rgba(200, 200, 200, 1)',
 		borderColor: 'transparent',
-		height: 30,
 		margin: 2,
-		borderWidth: 0,
-		borderRadius: 15,
+		width: '95%',
 	},
 	image: {
-		width: 180,
-		height: 180,
-		alignSelf: 'center',
+		width: 200,
+		height: 200,
 		margin: 10,
 	},
 });
