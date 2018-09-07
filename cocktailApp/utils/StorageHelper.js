@@ -1,10 +1,13 @@
 import { SQLite, FileSystem as FS, Asset } from 'expo';
 
 //The database needs to be downloaded first, otherwise a new empty database is created!
-FS.downloadAsync(
-	Asset.fromModule(require('../assets/drinks/drinksDB.db')).uri,
-	`${FS.documentDirectory}SQLite/drinksDB.db`
-);
+async () => {
+	await FS.downloadAsync(
+		Asset.fromModule(require('../assets/resources/drinksDB.db')).uri,
+		`${FS.documentDirectory}SQLite/drinksDB.db`
+	);
+};
+
 const db = SQLite.openDatabase('drinksDB.db');
 
 /*****************************************************************************
@@ -58,7 +61,7 @@ sql_fillCocktailWithIngredients = cocktail => {
 	});
 };
 
-export const db_getRandomCocktail = () => {
+export const db_getRandomCocktail = dbselector => {
 	//define an empty cocktail object that should be returned
 	let cocktail = {
 		id: null,

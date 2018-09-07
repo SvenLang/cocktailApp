@@ -28,7 +28,7 @@ export default class CocktailList extends React.Component {
 	makeRemoteRequest = () => {
 		this.setState({ loading: true });
 
-		getDrinks(30, this.state.searchQuery)
+		getDrinks('js', 30, this.state.searchQuery)
 			.then(drinks => {
 				this.setState({ loading: false, allDrinks: drinks });
 			})
