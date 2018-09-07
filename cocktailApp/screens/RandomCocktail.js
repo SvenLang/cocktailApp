@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import CocktailCard from '../components/CocktailCard';
-import { db_getRandomCocktail } from '../utils/StorageHelper';
+import { getDrinks, getRandomDrink } from '../assets/drinks/DrinksInterface';
 
 //database usage example!
 // https://github.com/expo/test-suite/blob/master/tests/SQLite.js
@@ -22,7 +22,7 @@ export default class RandomCocktail extends Component {
 	}
 
 	getRandomCocktail() {
-		db_getRandomCocktail()
+		getRandomDrink('js')
 			.then(cocktail => {
 				console.log(cocktail);
 				this.setState({ visible: true, selectedCocktail: cocktail });
