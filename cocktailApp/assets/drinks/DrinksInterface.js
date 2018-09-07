@@ -111,7 +111,7 @@ const sql_getRandomDrink = () => {
  * JavaScript data basis
  ***************************************/
 
-const js_getDrinks = (limit = 20, searchQuery = '') => {
+const js_getDrinks = (limit, searchQuery) => {
 	return new Promise((resolve, reject) => {
 		if (searchQuery.length === 0) {
 			resolve(_.take(allDrinks, limit));
@@ -131,7 +131,7 @@ const js_getRandomDrink = () => {
 };
 
 //Get all Cocktails with a rating equal 5
-export const getFavDrinks = (limit = 150) => {
+const js_getFavDrinks = limit => {
 	return new Promise((resolve, reject) => {
 		const result = _.filter(allDrinks, drink => {
 			if (drink.rating === 5) {
@@ -150,27 +150,53 @@ export const writeRating = drink => {};
  * abstract function methods
  ***************************************/
 
+/**
+ * Get a list of drinks.
+ * @param {*} dbSelector Select the database, where the data can be retrieved. Allowed values = [js|sql]. Default: js
+ * @param {*} limit Restrict the number of items returned to limit
+ * @param {*} searchQuery Only return those items that fit the provided searchQuery
+ */
 export const getDrinks = (dbSelector = 'js', limit = 20, searchQuery = '') => {
 	switch (dbSelector) {
-		case 'js': {
+		case 'js':
 			return js_getDrinks(limit, searchQuery);
-		}
-		case 'sql': {
+		case 'sql':
+			//TODO: Implement sql_getDrinks!
 			return js_getDrinks(limit, searchQuery);
-		}
+		default:
+			return Promise.reject('No such dbSelector: ' + dbSelector);
 	}
 };
 
+/**
+ * Return one random cocktail.
+ * @param {*} dbSelector Select the database, where the data can be retrieved. Allowed values = [js|sql]. Default: js
+ */
 export const getRandomDrink = dbSelector => {
-	console.log('getRandomDrink: Database selector is: ' + dbSelector);
-
 	switch (dbSelector) {
 		case 'js':
-			console.log('invoke js_getRandomDrink');
 			return js_getRandomDrink();
 		case 'sql':
-			console.log('invoke sql_getRandomDrink');
 			return sql_getRandomDrink();
+		default:
+			return Promise.reject('No such dbSelector: ' + dbSelector);
+	}
+};
+
+/**
+ * Get a list of favorite cocktails. Favorites are cocktails with 5 star rating.
+ * @param {*} dbSelector Select the database, where the data can be retrieved. Allowed values = [js|sql]. Default: js
+ * @param {*} limit Only return those items that fit the provided searchQuery
+ */
+export const getFavDrinks = (dbSelector = 'js', limit = 150) => {
+	switch (dbSelector) {
+		case 'js':
+			return js_getFavDrinks(limit);
+		case 'sql':
+			//TODO: Implement sql_getFavDrinks!
+			return js_getFavDrinks(limit);
+		default:
+			return Promise.reject('No such dbSelector: ' + dbSelector);
 	}
 };
 

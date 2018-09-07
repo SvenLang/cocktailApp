@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button } from 'react-native-elements';
 import CocktailCard from '../components/CocktailCard';
-import { db_getRandomCocktail } from '../utils/StorageHelper';
-
 import { getDrinks, getRandomDrink } from '../assets/drinks/DrinksInterface';
 
 //database usage example!

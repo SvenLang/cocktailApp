@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
-import { db_getRandomCocktail } from '../../utils/StorageHelper';
 import { Container, Content, Button, Icon, Left, Body, Text, Card, CardItem } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
+import { getRandomDrink } from '../../assets/drinks/DrinksInterface';
 
 export default class Quiz extends React.Component {
 	/**
@@ -128,8 +128,7 @@ export default class Quiz extends React.Component {
 
 			//request 4 random Cocktails asynchronously
 			for (let i = 0; i < 4; i++) {
-				var promise;
-				var promise = db_getRandomCocktail()
+				var promise = getRandomDrink('js')
 					.then(cocktail => {
 						quizSolution.answers.push({
 							name: cocktail.name,
