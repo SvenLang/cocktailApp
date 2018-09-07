@@ -8,13 +8,6 @@ import { db_getRandomCocktail } from '../utils/StorageHelper';
 //database usage example!
 // https://github.com/expo/test-suite/blob/master/tests/SQLite.js
 
-//The database needs to be downloaded first, otherwise a new empty database is created!
-FS.downloadAsync(
-	Asset.fromModule(require('../assets/drinks/drinksDB.db')).uri,
-	`${FS.documentDirectory}SQLite/drinksDB.db`
-);
-const db = SQLite.openDatabase('drinksDB.db');
-
 export default class RandomCocktail extends Component {
 	constructor(props) {
 		super(props);
