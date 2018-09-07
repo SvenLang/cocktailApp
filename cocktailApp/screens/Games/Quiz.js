@@ -1,24 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Image, ImageBackground } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import { db_getRandomCocktail } from '../../utils/StorageHelper';
-//import { Button } from 'react-native-elements';
-import {
-	Container,
-	Header,
-	Title,
-	Content,
-	Button,
-	Icon,
-	Left,
-	Right,
-	Body,
-	Text,
-	Card,
-	CardItem,
-	Thumbnail,
-} from 'native-base';
+import { Container, Content, Button, Icon, Left, Body, Text, Card, CardItem } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { Font, AppLoading } from 'expo';
+import { Font } from 'expo';
 
 export default class Quiz extends React.Component {
 	/**
@@ -45,8 +30,6 @@ export default class Quiz extends React.Component {
 			disabled_buttonIds: [],
 			loading: true,
 		};
-
-		this.newGame();
 	}
 
 	async componentWillMount() {
@@ -164,13 +147,8 @@ export default class Quiz extends React.Component {
 			// When all promises have terminated, populate the game screen with the data
 			Promise.all(promises)
 				.then(() => {
-					console.log(
-						'Generated data from random cocktails, evaluate thumbnail:' + JSON.stringify(quizSolution)
-					);
 					// Check if the solution does have a thumbnail attached
 					if (typeof quizSolution.answers[quizSolution.id].thumbnail === 'undefined') {
-						console.log('Thumbnail not found');
-
 						//Change the solution to a cocktail that does have a thumbnail attached
 						var i = quizSolution.id === 3 ? 0 : quizSolution.id + 1;
 						do {
@@ -209,7 +187,7 @@ export default class Quiz extends React.Component {
 			this.setState({
 				//dynamic generation of the button style names
 				['button' + id + '_style']: styles.buttonStyle_success,
-				points: this.state.points + 1,
+				points: this.state.points + 3,
 			});
 		} else {
 			this.setState({
@@ -223,7 +201,8 @@ export default class Quiz extends React.Component {
 	 * Provides a hint of the correct answer at the cost of a point.
 	 */
 	hint() {
-		alert('Hint: ' + this.state.quizSolution.answers[this.state.quizSolution.id].instructions);
+		alert(this.state.quizSolution.answers[this.state.quizSolution.id].instructions);
+
 		this.setState({
 			points: this.state.points - 1,
 		});
@@ -264,39 +243,74 @@ export default class Quiz extends React.Component {
 		}
 	}
 
+	/**
+	 * Display this page before the first Game is started.
+	 * It shortly explains the rules and then a game can be started
+	 */
 	renderWelcomePage() {
 		return (
-			<View style={styles.container}>
-				<Button title={'new'} onPress={() => this.newGame()} />
-				<Text>{this.state.error}</Text>
+			<View style={{ height: '100%' }}>
+				<Container style={styles.container}>
+					<Button iconLeft full onPress={() => this.newGame()}>
+						<Icon name="md-refresh" />
+						<Text>New</Text>
+					</Button>
+					<Card style={styles.cardStyle}>
+						<CardItem header bordered>
+							<Text>Cocktail Quiz</Text>
+						</CardItem>
+						<CardItem>
+							<Text>
+								This is a cocktail guessing game. You will see images of cocktails and 4 possible
+								answers. Each correct answer is worth 3 points. There are two different means of help.
+							</Text>
+						</CardItem>
+						<CardItem>
+							<Text>
+								Joker: Using the joker will disable one random wrong answer at the cost of 2 points.
+							</Text>
+						</CardItem>
+						<CardItem>
+							<Text>
+								Hint: The hint will display the mixing instructions of the displayed cocktail at the
+								cost of 2 points.
+							</Text>
+						</CardItem>
+					</Card>
+				</Container>
 			</View>
 		);
 	}
 
-	renderGamePage2() {
+	/**
+	 * Game data has been created, so display the real quiz screen
+	 */
+	renderGamePage() {
 		return (
 			<View style={{ height: '100%' }}>
 				<Container style={styles.container}>
-					<Content>
+					<Content padder>
 						<Grid>
-							<Row size={1} style={{ backgroundColor: '#DD9e2c' }}>
-								<Button iconLeft primary onPress={() => this.newGame()}>
+							<Row>
+								<Button iconLeft primary style={styles.topButtonStyle} onPress={() => this.newGame()}>
 									<Icon name="md-refresh" />
 									<Text>New</Text>
 								</Button>
-								<Button iconLeft primary onPress={() => this.joker()}>
+								<Button iconLeft primary style={styles.topButtonStyle} onPress={() => this.joker()}>
 									<Icon name="heart" />
 									<Text>Joker</Text>
 								</Button>
-								<Button iconLeft primary onPress={() => this.hint()}>
+								<Button iconLeft primary style={styles.topButtonStyle} onPress={() => this.hint()}>
 									<Icon name="help" />
 									<Text>Hint</Text>
 								</Button>
-								<Text>{this.state.points}</Text>
+								<Button disabled primary style={styles.topButtonStyle}>
+									<Text>{this.state.points}</Text>
+								</Button>
 							</Row>
-							<Row style={{ backgroundColor: '#11CE9F', alignContent: 'center', alignItems: 'center' }}>
+							<Row>
 								<Body>
-									<Card style={{ width: '90%', alignContent: 'center', alignItems: 'center' }}>
+									<Card style={styles.cardStyle}>
 										<CardItem bordered>
 											<Left>
 												<Icon name="md-wine" />
@@ -306,13 +320,9 @@ export default class Quiz extends React.Component {
 												</Body>
 											</Left>
 										</CardItem>
-										<CardItem
-											cardBody
-											bordered
-											style={{ alignContent: 'center', alignItems: 'center' }}
-										>
+										<CardItem cardBody bordered>
 											<Image
-												style={styles.image}
+												style={styles.cocktailImage}
 												source={{
 													uri: this.state.quizSolution.answers[this.state.quizSolution.id]
 														.thumbnail,
@@ -320,27 +330,49 @@ export default class Quiz extends React.Component {
 											/>
 										</CardItem>
 										<CardItem bordered>
-											<Grid style={{ margin: 5 }}>
+											<Grid>
 												<Row>
-													<Col style={{ alignItems: 'center' }}>
+													<Col style={styles.quizButtonCol}>
 														<Button
 															rounded
 															style={this.state.button0_style}
+															disabled={this.state.button0_disabled}
 															onPress={() => this.checkSolution(0)}
 														>
 															<Text>{this.state.quizSolution.answers[0].name}</Text>
 														</Button>
 													</Col>
-													<Col style={{ backgroundColor: '#aaaa00' }}>
-														<Text>B</Text>
+													<Col style={styles.quizButtonCol}>
+														<Button
+															rounded
+															style={this.state.button1_style}
+															disabled={this.state.button1_disabled}
+															onPress={() => this.checkSolution(1)}
+														>
+															<Text>{this.state.quizSolution.answers[1].name}</Text>
+														</Button>
 													</Col>
 												</Row>
 												<Row>
-													<Col style={{ backgroundColor: '#aa00aa' }}>
-														<Text>C</Text>
+													<Col style={styles.quizButtonCol}>
+														<Button
+															rounded
+															style={this.state.button2_style}
+															disabled={this.state.button2_disabled}
+															onPress={() => this.checkSolution(2)}
+														>
+															<Text>{this.state.quizSolution.answers[2].name}</Text>
+														</Button>
 													</Col>
-													<Col style={{ backgroundColor: '#00aaaa' }}>
-														<Text>D</Text>
+													<Col style={styles.quizButtonCol}>
+														<Button
+															rounded
+															style={this.state.button3_style}
+															disabled={this.state.button3_disabled}
+															onPress={() => this.checkSolution(3)}
+														>
+															<Text>{this.state.quizSolution.answers[3].name}</Text>
+														</Button>
 													</Col>
 												</Row>
 											</Grid>
@@ -355,79 +387,16 @@ export default class Quiz extends React.Component {
 		);
 	}
 
-	renderGamePage() {
-		return (
-			<Grid style={{ height: '100%' }}>
-				<Row size={15}>
-					<Col>
-						<Button title={'New'} onPress={() => this.newGame()} />
-					</Col>
-					<Col>
-						<Button title={'Joker'} onPress={() => this.joker()} />
-					</Col>
-					<Col>
-						<Button title={'Hint'} onPress={() => this.hint()} />
-					</Col>
-					<Col>
-						<Text>{this.state.points}</Text>
-					</Col>
-				</Row>
-				<Row size={50}>
-					<Image
-						style={styles.image}
-						source={{ uri: this.state.quizSolution.answers[this.state.quizSolution.id].thumbnail }}
-					/>
-				</Row>
-				<Row size={35}>
-					<Row>
-						<Col>
-							<Button
-								title={this.state.quizSolution.answers[0].name}
-								buttonStyle={this.state.button0_style}
-								disabled={this.state.button0_disabled}
-								onPress={() => this.checkSolution(0)}
-							/>
-						</Col>
-						<Col>
-							<Button
-								title={this.state.quizSolution.answers[1].name}
-								buttonStyle={this.state.button1_style}
-								disabled={this.state.button1_disabled}
-								onPress={() => this.checkSolution(1)}
-							/>
-						</Col>
-					</Row>
-					<Row>
-						<Col>
-							<Button
-								title={this.state.quizSolution.answers[2].name}
-								buttonStyle={this.state.button2_style}
-								disabled={this.state.button2_disabled}
-								onPress={() => this.checkSolution(2)}
-							/>
-						</Col>
-						<Col>
-							<Button
-								title={this.state.quizSolution.answers[3].name}
-								buttonStyle={this.state.button3_style}
-								disabled={this.state.button3_disabled}
-								onPress={() => this.checkSolution(3)}
-							/>
-						</Col>
-					</Row>
-				</Row>
-			</Grid>
-		);
-	}
-
+	/**
+	 * Render function that calls different rendering depending on the state
+	 * of the font being loaded and the game data.
+	 */
 	render() {
-		console.log(this.state.quizSolution);
-
 		if (this.state.loading) {
-			return this.renderWelcomePage();
+			return <View />;
 		} else {
 			if (this.state.displayGameData) {
-				return this.renderGamePage2();
+				return this.renderGamePage();
 			} else {
 				return this.renderWelcomePage();
 			}
@@ -437,44 +406,43 @@ export default class Quiz extends React.Component {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: '#ffd',
-	},
-	topbar: {
-		flex: 1,
-		height: 30,
-		flexDirection: 'row',
-	},
-	topbarElement: {
-		flex: 1,
-		margin: 1,
+		backgroundColor: 'rgba(230,250,250,1)',
+		alignContent: 'center',
+		alignItems: 'center',
 	},
 	buttonStyle_normal: {
 		backgroundColor: 'rgba(92, 99,216, 1)',
 		borderColor: 'transparent',
-		margin: 2,
 		width: '95%',
 	},
 	buttonStyle_success: {
 		backgroundColor: 'rgba(130, 250, 100, 1)',
 		borderColor: 'transparent',
-		margin: 2,
 		width: '95%',
 	},
 	buttonStyle_error: {
 		backgroundColor: 'rgba(210, 50, 50, 1)',
 		borderColor: 'transparent',
-		margin: 2,
 		width: '95%',
 	},
 	buttonStyle_disabled: {
 		backgroundColor: 'rgba(200, 200, 200, 1)',
 		borderColor: 'transparent',
-		margin: 2,
 		width: '95%',
 	},
-	image: {
+	cocktailImage: {
 		width: 200,
 		height: 200,
-		margin: 10,
+		margin: 5,
+	},
+	quizButtonCol: {
+		margin: 2,
+	},
+	cardStyle: {
+		width: '95%',
+		alignItems: 'center',
+	},
+	topButtonStyle: {
+		borderRadius: 5,
 	},
 });
