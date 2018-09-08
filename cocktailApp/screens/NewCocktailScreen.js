@@ -99,14 +99,28 @@ export default class NewCockailScreen extends React.Component {
 				<Row key={'r' + i}>
 					<Col key={'ci' + i} size={6}>
 						<Item floatingLabel key={'iti' + i}>
-							<Label key={'li' + i}>Ingredient</Label>
-							<Input value={obj.ingredient} key={'ii' + i} />
+							<Label key={'li' + i}>
+								Ingredient
+								{i}
+							</Label>
+							<Input
+								value={obj.ingredient}
+								key={'ii' + i}
+								onChangeText={this.saveIngredient.bind(this, obj.key)}
+							/>
 						</Item>
 					</Col>
 					<Col key={'cm' + i} size={4}>
 						<Item floatingLabel key={'itm' + i}>
-							<Label key={'lm' + i}>Measure</Label>
-							<Input value={obj.measure} key={'im' + i} />
+							<Label key={'lm' + i}>
+								Measure
+								{i}
+							</Label>
+							<Input
+								value={obj.measure}
+								key={'im' + i}
+								onChangeText={this.saveMeasure.bind(this, obj.key)}
+							/>
 						</Item>
 					</Col>
 					<Col key={'cb' + i} size={1}>
@@ -121,6 +135,24 @@ export default class NewCockailScreen extends React.Component {
 			);
 		});
 		return rows;
+	}
+
+	saveIngredient(key, value) {
+		//find the index where the object.key is stored and modify the ingredient
+		var objIndex = this.state.ingredients.findIndex(obj => obj.key === key);
+		this.state.ingredients[objIndex].ingredient = value;
+		this.setState({
+			ingredients: this.state.ingredients,
+		});
+	}
+
+	saveMeasure(key, value) {
+		//find the index where the object.key is stored and modify the measure
+		var objIndex = this.state.ingredients.findIndex(obj => obj.key === key);
+		this.state.ingredients[objIndex].measure = value;
+		this.setState({
+			ingredients: this.state.ingredients,
+		});
 	}
 
 	/**
