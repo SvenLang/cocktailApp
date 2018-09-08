@@ -66,14 +66,28 @@ export default class NewCockailScreen extends React.Component {
 		return options;
 	}
 
+	/**
+	 * Add another row to add an ingredient for a cocktail
+	 */
 	addIngredientRows() {
-		this.state.ingredients.push(ingredientsArrayKey++);
+		// Add on object identified by key, so it can be found later if an item with a lower index was already deleted!
+		// For the same reason the ingredientsArrayKey counter is only increased!
+		this.state.ingredients.push({ key: ingredientsArrayKey++ });
 		this.setState({ ingredients: this.state.ingredients });
 	}
 
-	removeIngredientRow(index) {
-		this.state.ingredients.splice(index, 1);
-		ingredientsArrayKey--;
+	/**
+	 * The ingredient identified by key was removed, so the complete object should be removed from the array
+	 * @param {*} key Identifies the clicked row in the list of the ingredients
+	 */
+	removeIngredientRow(key) {
+		//find the entry matching the key and remove the object from the array
+		this.state.ingredients.some((item, index) => {
+			if (this.state.ingredients[index].key === key) {
+				this.state.ingredients.splice(index, 1);
+			}
+		});
+
 		this.setState({
 			ingredients: this.state.ingredients,
 		});
@@ -99,7 +113,7 @@ export default class NewCockailScreen extends React.Component {
 						<Icon
 							key={'ic' + i}
 							name="md-close"
-							onPress={() => this.removeIngredientRow(i)}
+							onPress={() => this.removeIngredientRow(obj.key)}
 							style={{ marginTop: 30 }}
 						/>
 					</Col>
