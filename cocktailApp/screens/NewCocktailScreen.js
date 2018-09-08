@@ -26,7 +26,7 @@ const dummyData = {
 	glasses: ['Old-fashioned glass', 'Beer Glass', 'White wine glass'],
 };
 
-let index = 0;
+let ingredientsArrayKey = 0;
 
 export default class NewCockailScreen extends React.Component {
 	static navigationOptions = {
@@ -67,25 +67,41 @@ export default class NewCockailScreen extends React.Component {
 	}
 
 	addIngredientRows() {
-		this.state.ingredients.push(index++);
+		this.state.ingredients.push(ingredientsArrayKey++);
 		this.setState({ ingredients: this.state.ingredients });
+	}
+
+	removeIngredientRow(index) {
+		this.state.ingredients.splice(index, 1);
+		ingredientsArrayKey--;
+		this.setState({
+			ingredients: this.state.ingredients,
+		});
 	}
 
 	createIngredientRow() {
 		const rows = this.state.ingredients.map((obj, i) => {
 			return (
-				<Row>
-					<Col>
-						<Item floatingLabel size={6}>
-							<Label>Ingredient</Label>
-							<Input value={obj.ingredient} key={'i' + i} />
+				<Row key={'r' + i}>
+					<Col key={'ci' + i} size={6}>
+						<Item floatingLabel key={'iti' + i}>
+							<Label key={'li' + i}>Ingredient</Label>
+							<Input value={obj.ingredient} key={'ii' + i} />
 						</Item>
 					</Col>
-					<Col>
-						<Item floatingLabel size={4}>
-							<Label>Measure</Label>
-							<Input value={obj.measure} key={'m' + i} />
+					<Col key={'cm' + i} size={4}>
+						<Item floatingLabel key={'itm' + i}>
+							<Label key={'lm' + i}>Measure</Label>
+							<Input value={obj.measure} key={'im' + i} />
 						</Item>
+					</Col>
+					<Col key={'cb' + i} size={1}>
+						<Icon
+							key={'ic' + i}
+							name="md-close"
+							onPress={() => this.removeIngredientRow(i)}
+							style={{ marginTop: 30 }}
+						/>
 					</Col>
 				</Row>
 			);
@@ -184,7 +200,6 @@ export default class NewCockailScreen extends React.Component {
 													<Label>Picture</Label>
 													<Input onValueChange={this.saveDrinkThumb.bind(this)} />
 												</Item>
-												<Text>Ingredients:</Text>
 												<Row>
 													<Col size={4}>
 														<Item disabled>
@@ -234,9 +249,10 @@ export default class NewCockailScreen extends React.Component {
 
 												<Row>
 													<Col>
-														<Item disabled>
-															<Input disabled placeholder="Ingredients: " />
-														</Item>
+														<Text>
+															{'\n'}
+															Ingredients:
+														</Text>
 													</Col>
 													<Col>
 														<Right>
