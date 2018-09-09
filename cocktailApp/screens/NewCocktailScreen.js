@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Image, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, KeyboardAvoidingView, ListView } from 'react-native';
 import {
 	Container,
 	Content,
@@ -19,6 +19,7 @@ import {
 	CardItem,
 	H2,
 	Textarea,
+	ListItem,
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
@@ -46,7 +47,7 @@ export default class NewCockailScreen extends React.Component {
 		this.state = {
 			category: undefined,
 			glass: undefined,
-			alcoholic: undefined,
+			alcoholic: false,
 			drinkThumb: undefined,
 			ingredients: [],
 			instructions: undefined,
@@ -271,6 +272,27 @@ export default class NewCockailScreen extends React.Component {
 													<Label>Picture</Label>
 													<Input onValueChange={this.saveDrinkThumb.bind(this)} />
 												</Item>
+												<Row>
+													<Col size={4}>
+														<Item disabled>
+															<Input disabled placeholder="Alcoholic?" />
+														</Item>
+													</Col>
+													<Col style={{ alignItems: 'center', alignContent: 'center' }}>
+														<ListItem
+															onPress={() =>
+																this.setState({ alcoholic: !this.state.alcoholic })
+															}
+														>
+															<CheckBox
+																checked={this.state.alcoholic}
+																onPress={() =>
+																	this.setState({ alcoholic: !this.state.alcoholic })
+																}
+															/>
+														</ListItem>
+													</Col>
+												</Row>
 												<Row>
 													<Col size={4}>
 														<Item disabled>
