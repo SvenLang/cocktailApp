@@ -25,7 +25,7 @@ import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
 import { getGlasses, getCategories } from '../assets/drinks/DrinksInterface';
 
-let ingredientsArrayKey = 0;
+let ingredientsArrayKey = 1;
 
 export default class NewCockailScreen extends React.Component {
 	static navigationOptions = {
@@ -45,14 +45,14 @@ export default class NewCockailScreen extends React.Component {
 		let allGlasses = getGlasses();
 		let allCategories = getCategories();
 		this.state = {
-			category: undefined,
-			glass: undefined,
+			name: '',
+			category: '',
+			glass: '',
 			alcoholic: false,
-			drinkThumb: undefined,
-			ingredients: [],
-			instructions: undefined,
+			drinkThumb: '',
+			ingredients: [{ key: 0, ingredient: '', measure: '' }],
+			instructions: '',
 			loading: true,
-			nameIconVisible: false,
 			allGlasses: allGlasses,
 			allCategories: allCategories,
 		};
@@ -79,7 +79,7 @@ export default class NewCockailScreen extends React.Component {
 	addIngredientRows() {
 		// Add on object identified by key, so it can be found later if an item with a lower index was already deleted!
 		// For the same reason the ingredientsArrayKey counter is only increased!
-		this.state.ingredients.push({ key: ingredientsArrayKey++ });
+		this.state.ingredients.push({ key: ingredientsArrayKey++, ingredient: '', measure: '' });
 		this.setState({ ingredients: this.state.ingredients });
 	}
 
@@ -170,50 +170,17 @@ export default class NewCockailScreen extends React.Component {
 		});
 	}
 
-	/**
-	 * Save the entered name of the Cocktail
-	 * @param {*} value Enterned name of the cocktail
-	 */
-	saveName(value) {
-		this.setState({ name: value });
-	}
-
-	/**
-	 * Save the selected category from the available options
-	 * @param {*} value Selected category
-	 */
-	pickCategory(value) {
-		console.log('Picked category:' + value);
-		this.setState({
-			category: value,
-		});
-	}
-
-	/**
-	 * Save the selected glass type from the available options
-	 * @param {*} value Selected glass type
-	 */
-	pickGlass(value) {
-		console.log('Picked glass:' + value);
-		this.setState({
-			glass: value,
-		});
-	}
-
-	/**
-	 * Save the entered URL/path to the image of the cocktail
-	 * @param {*} value URI to the cocktails image
-	 */
-	saveDrinkThumb(value) {
-		this.setState({ drinkThumb: value });
-	}
-
-	/**
-	 * Save the provided instructions for a new cocktail
-	 * @param {*} value instruction text
-	 */
-	saveInstructions(value) {
-		this.setState({ instructions: value });
+	canSubmitBeDisplayed() {
+		const { name, category, glass, instructions, ingredients } = this.state;
+		return (
+			name.length > 0 &&
+			category.length > 0 &&
+			glass.length > 0 &&
+			instructions.length > 0 &&
+			ingredients.length > 0 &&
+			ingredients[0].ingredient.length > 0 &&
+			ingredients[0].measure.length > 0
+		);
 	}
 
 	/**
@@ -244,13 +211,12 @@ export default class NewCockailScreen extends React.Component {
 	render() {
 		console.log('items in state: ' + JSON.stringify(this.state));
 
+		let isSubmitEnabled = this.canSubmitBeDisplayed();
+
 		if (this.state.loading === false) {
 			return (
-				<KeyboardAvoidingView
-					style={{ backgroundColor: 'rgba(230,250,250,1)', height: '100%' }}
-					behavior="padding"
-				>
-					<Container>
+				<KeyboardAvoidingView style={{ height: '100%' }} behavior="padding">
+					<Container style={{ backgroundColor: 'rgba(230,250,250,1)' }}>
 						<Content padder>
 							<Card
 								style={{
@@ -266,11 +232,13 @@ export default class NewCockailScreen extends React.Component {
 											<Grid>
 												<Item floatingLabel>
 													<Label>Cocktail Name</Label>
-													<Input onChangeText={this.saveName.bind(this)} />
+													<Input onChangeText={value => this.setState({ name: value })} />
 												</Item>
 												<Item floatingLabel>
 													<Label>Picture</Label>
-													<Input onValueChange={this.saveDrinkThumb.bind(this)} />
+													<Input
+														onValueChange={value => this.setState({ drinkThumb: value })}
+													/>
 												</Item>
 												<Row>
 													<Col size={4}>
@@ -313,7 +281,9 @@ export default class NewCockailScreen extends React.Component {
 																placeholder="Select a category"
 																placeholderStyle={{ color: '#2874F0' }}
 																selectedValue={this.state.category}
-																onValueChange={this.pickCategory.bind(this)}
+																onValueChange={value =>
+																	this.setState({ category: value })
+																}
 															>
 																<Picker.Item label="Select Category" value={null} />
 																{this.createDropdown(this.state.allCategories)}
@@ -336,7 +306,7 @@ export default class NewCockailScreen extends React.Component {
 																placeholder="Select a glass"
 																placeholderStyle={{ color: '#2874F0' }}
 																selectedValue={this.state.glass}
-																onValueChange={this.pickGlass.bind(this)}
+																onValueChange={value => this.setState({ glass: value })}
 															>
 																<Picker.Item label="Select Glass" value={null} />
 																{this.createDropdown(this.state.allGlasses)}
@@ -367,7 +337,7 @@ export default class NewCockailScreen extends React.Component {
 																onPress={() => this.addIngredientRows()}
 															>
 																<Icon name="md-add" />
-																<Text>New</Text>
+																<Text>Add</Text>
 															</Button>
 														</Right>
 													</Col>
@@ -378,10 +348,16 @@ export default class NewCockailScreen extends React.Component {
 												rowSpan={3}
 												bordered
 												placeholder="Instructions"
-												onChangeText={this.saveInstructions.bind(this)}
+												onChangeText={value => this.setState({ instructions: value })}
 											/>
 										</Form>
-										<Button primary iconLeft full style={{ marginTop: 10 }}>
+										<Button
+											primary
+											iconLeft
+											full
+											style={{ marginTop: 10 }}
+											disabled={!isSubmitEnabled}
+										>
 											<Icon name="md-checkmark-circle" />
 											<Text>Save Cocktail</Text>
 										</Button>
