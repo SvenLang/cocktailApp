@@ -6,7 +6,8 @@ import {
   Modal,
   FlatList,
   View,
-  ImageBackground
+  ImageBackground,
+  ScrollView
 } from "react-native";
 
 import { Card, Button, Rating, ListItem } from "react-native-elements";
@@ -34,50 +35,53 @@ export default class CocktailCard extends React.Component {
             source={require("../assets/images/tropicalBackground.jpg")}
             style={{ width: "100%", height: "100%" }}
           >
-            <Card
-              title={this.props.cocktailToShow.name}
-              containerStyle={styles.card}
-            >
-              <Rating
-                showRating
-                type="star"
-                fractions={0}
-                startingValue={this.props.cocktailToShow.rating}
-                imageSize={20}
-                onFinishRating={this.props.ratingCompleted}
-                style={styles.rating}
-              />
-              <Image
-                style={styles.image}
-                source={{
-                  uri: this.props.cocktailToShow.drinkThumb
-                }}
-              />
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between"
-                }}
+            <ScrollView>
+              <Card
+                title={this.props.cocktailToShow.name}
+                containerStyle={styles.card}
               >
-                <Text>Category: {this.props.cocktailToShow.category} </Text>
-                <Text>Glass: {this.props.cocktailToShow.glass} </Text>
-              </View>
-              <Text>Ingredients:</Text>
-              <FlatList
-                data={this.props.cocktailToShow.ingredients}
-                renderItem={({ item }) => (
-                  <ListItem
-                    title={item.ingredient}
-                    rightTitle={item.measure}
-                    titleStyle={{ fontSize: 12 }}
-                    rightTitleStyle={{ fontSize: 12 }}
-                  />
-                )}
-                keyExtractor={item => item.ingredient}
-              />
-              <Text>Instructions:</Text>
-              <Text>{this.props.cocktailToShow.instructions}</Text>
-            </Card>
+                <Rating
+                  showRating
+                  type="star"
+                  fractions={0}
+                  startingValue={this.props.cocktailToShow.rating}
+                  imageSize={20}
+                  onFinishRating={this.props.ratingCompleted}
+                  style={styles.rating}
+                />
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: this.props.cocktailToShow.drinkThumb
+                  }}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between"
+                  }}
+                >
+                  <Text>Category: {this.props.cocktailToShow.category} </Text>
+                  <Text>Glass: {this.props.cocktailToShow.glass} </Text>
+                </View>
+                <Text>Ingredients:</Text>
+                <FlatList
+                  data={this.props.cocktailToShow.ingredients}
+                  renderItem={({ item }) => (
+                    <ListItem
+                      title={item.ingredient}
+                      rightTitle={item.measure}
+                      titleStyle={{ fontSize: 12 }}
+                      rightTitleStyle={{ fontSize: 12 }}
+                      hideChevron={true}
+                    />
+                  )}
+                  keyExtractor={item => item.ingredient}
+                />
+                <Text>Instructions:</Text>
+                <Text>{this.props.cocktailToShow.instructions}</Text>
+              </Card>
+            </ScrollView>
           </ImageBackground>
         </Modal>
       </View>
