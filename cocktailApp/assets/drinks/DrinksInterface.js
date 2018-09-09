@@ -200,4 +200,18 @@ export const getFavDrinks = (dbSelector = 'js', limit = 150) => {
 	}
 };
 
+/**
+ * Return a list of all categories in alphabetic order
+ */
+export const getCategories = () => {
+	return [...new Set(allDrinks.map(item => item.category))].sort();
+};
+
+/**
+ * Return a list of all glass types in alphabetic order
+ */
+export const getGlasses = () => {
+	return [...new Set(allDrinks.map(item => item.glass))].sort();
+};
+
 export default getDrinks;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Image } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, KeyboardAvoidingView } from 'react-native';
 import {
 	Container,
 	Content,
@@ -17,14 +17,12 @@ import {
 	Text,
 	Card,
 	CardItem,
+	H2,
+	Textarea,
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
-
-const dummyData = {
-	categories: ['Cocktail', 'Shot', 'Beer'],
-	glasses: ['Old-fashioned glass', 'Beer Glass', 'White wine glass'],
-};
+import { getGlasses, getCategories } from '../assets/drinks/DrinksInterface';
 
 let ingredientsArrayKey = 0;
 
@@ -43,6 +41,8 @@ export default class NewCockailScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
+		let allGlasses = getGlasses();
+		let allCategories = getCategories();
 		this.state = {
 			category: undefined,
 			glass: undefined,
@@ -52,8 +52,14 @@ export default class NewCockailScreen extends React.Component {
 			instructions: undefined,
 			loading: true,
 			nameIconVisible: false,
+			allGlasses: allGlasses,
+			allCategories: allCategories,
 		};
 	}
+
+	/********************************************
+	 * Operations that modify what is displayed
+	 ********************************************/
 
 	/**
 	 * Dynamically create the options for dropdown menues
@@ -93,6 +99,10 @@ export default class NewCockailScreen extends React.Component {
 		});
 	}
 
+	/**
+	 * Automatically build as many rows for adding ingredients and measures as was requested
+	 * Content is retrieved from the state.ingredients array.
+	 */
 	createIngredientRow() {
 		const rows = this.state.ingredients.map((obj, i) => {
 			return (
@@ -136,6 +146,10 @@ export default class NewCockailScreen extends React.Component {
 		});
 		return rows;
 	}
+
+	/********************************************
+	 * Operations that handle input content
+	 ********************************************/
 
 	saveIngredient(key, value) {
 		//find the index where the object.key is stored and modify the ingredient
@@ -186,11 +200,19 @@ export default class NewCockailScreen extends React.Component {
 	}
 
 	/**
-	 * Save the enterd URL/path to the image of the cocktail
+	 * Save the entered URL/path to the image of the cocktail
 	 * @param {*} value URI to the cocktails image
 	 */
 	saveDrinkThumb(value) {
 		this.setState({ drinkThumb: value });
+	}
+
+	/**
+	 * Save the provided instructions for a new cocktail
+	 * @param {*} value instruction text
+	 */
+	saveInstructions(value) {
+		this.setState({ instructions: value });
 	}
 
 	/**
@@ -223,7 +245,10 @@ export default class NewCockailScreen extends React.Component {
 
 		if (this.state.loading === false) {
 			return (
-				<ScrollView style={styles.container}>
+				<KeyboardAvoidingView
+					style={{ backgroundColor: 'rgba(230,250,250,1)', height: '100%' }}
+					behavior="padding"
+				>
 					<Container>
 						<Content padder>
 							<Card
@@ -264,7 +289,7 @@ export default class NewCockailScreen extends React.Component {
 																onValueChange={this.pickCategory.bind(this)}
 															>
 																<Picker.Item label="Select Category" value={null} />
-																{this.createDropdown(dummyData.categories)}
+																{this.createDropdown(this.state.allCategories)}
 															</Picker>
 														</Item>
 													</Col>
@@ -287,7 +312,7 @@ export default class NewCockailScreen extends React.Component {
 																onValueChange={this.pickGlass.bind(this)}
 															>
 																<Picker.Item label="Select Glass" value={null} />
-																{this.createDropdown(dummyData.glasses)}
+																{this.createDropdown(this.state.allGlasses)}
 															</Picker>
 														</Item>
 													</Col>
@@ -295,10 +320,10 @@ export default class NewCockailScreen extends React.Component {
 
 												<Row>
 													<Col>
-														<Text>
+														<H2>
 															{'\n'}
 															Ingredients:
-														</Text>
+														</H2>
 													</Col>
 													<Col>
 														<Right>
@@ -321,13 +346,23 @@ export default class NewCockailScreen extends React.Component {
 												</Row>
 												{this.createIngredientRow()}
 											</Grid>
+											<Textarea
+												rowSpan={3}
+												bordered
+												placeholder="Instructions"
+												onChangeText={this.saveInstructions.bind(this)}
+											/>
 										</Form>
+										<Button primary iconLeft full style={{ marginTop: 10 }}>
+											<Icon name="md-checkmark-circle" />
+											<Text>Save Cocktail</Text>
+										</Button>
 									</Body>
 								</CardItem>
 							</Card>
 						</Content>
 					</Container>
-				</ScrollView>
+				</KeyboardAvoidingView>
 			);
 		} else {
 			return <View />;
@@ -339,6 +374,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: 0,
-		backgroundColor: '#fff',
+		backgroundColor: 'rgba(230,250,250,1)',
 	},
 });
