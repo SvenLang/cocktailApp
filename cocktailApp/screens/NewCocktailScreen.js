@@ -275,10 +275,10 @@ export default class NewCockailScreen extends React.Component {
 												<Row>
 													<Col size={4}>
 														<Item disabled>
-															<Input disabled placeholder="Alcoholic?" />
+															<Input disabled placeholder="Alcoholic" />
 														</Item>
 													</Col>
-													<Col style={{ alignItems: 'center', alignContent: 'center' }}>
+													<Col style={{ alignItems: 'flex-end', alignContent: 'center' }}>
 														<ListItem
 															onPress={() =>
 																this.setState({ alcoholic: !this.state.alcoholic })
@@ -286,6 +286,11 @@ export default class NewCockailScreen extends React.Component {
 														>
 															<CheckBox
 																checked={this.state.alcoholic}
+																style={{
+																	alignSelf: 'flex-end',
+																	marginRight: 0,
+																	marginLeft: 1,
+																}}
 																onPress={() =>
 																	this.setState({ alcoholic: !this.state.alcoholic })
 																}
@@ -351,12 +356,13 @@ export default class NewCockailScreen extends React.Component {
 														<Right>
 															<Button
 																iconLeft
-																block
+																full
 																style={{
-																	alignContent: 'center',
-																	alignItems: 'center',
+																	alignSelf: 'flex-end',
 																	height: '80%',
-																	marginTop: 5,
+																	marginTop: 7,
+																	marginLeft: 50,
+																	marginRight: 0,
 																}}
 																onPress={() => this.addIngredientRows()}
 															>
