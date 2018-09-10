@@ -214,4 +214,18 @@ export const getGlasses = () => {
 	return [...new Set(allDrinks.map(item => item.glass))].sort();
 };
 
+export const insertNewCocktail = (dbSelector = 'js', cocktail) => {
+	switch (dbSelector) {
+		case 'js':
+			var oldArrayLength = allDrinks.length;
+			var newArrayLength = allDrinks.push(cocktail);
+			return newArrayLength > oldArrayLength;
+		case 'sql':
+			//TODO: Implement sql_getFavDrinks!
+			return js_getFavDrinks(limit);
+		default:
+			return Promise.reject('No such dbSelector: ' + dbSelector);
+	}
+};
+
 export default getDrinks;

@@ -23,9 +23,12 @@ import {
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
-import { getGlasses, getCategories } from '../assets/drinks/DrinksInterface';
+import { getGlasses, getCategories, insertNewCocktail } from '../assets/drinks/DrinksInterface';
+import Images from '@assets/images';
 
 let ingredientsArrayKey = 1;
+let allGlasses = getGlasses();
+let allCategories = getCategories();
 
 export default class NewCockailScreen extends React.Component {
 	static navigationOptions = {
@@ -40,10 +43,23 @@ export default class NewCockailScreen extends React.Component {
 		this.setState({ loading: false });
 	}
 
+	resetStateToDefaults() {
+		this.setState({
+			name: '',
+			category: '',
+			glass: '',
+			alcoholic: false,
+			drinkThumb: '',
+			ingredients: [{ key: 0, ingredient: '', measure: '' }],
+			instructions: '',
+			loading: true,
+			allGlasses: allGlasses,
+			allCategories: allCategories,
+		});
+	}
+
 	constructor(props) {
 		super(props);
-		let allGlasses = getGlasses();
-		let allCategories = getCategories();
 		this.state = {
 			name: '',
 			category: '',
@@ -59,7 +75,7 @@ export default class NewCockailScreen extends React.Component {
 	}
 
 	/********************************************
-	 * Operations that modify what is displayed
+	 * Operations for the dropdowns
 	 ********************************************/
 
 	/**
@@ -72,6 +88,10 @@ export default class NewCockailScreen extends React.Component {
 		});
 		return options;
 	}
+
+	/********************************************
+	 * Operations for ingredients
+	 ********************************************/
 
 	/**
 	 * Add another row to add an ingredient for a cocktail
@@ -101,10 +121,41 @@ export default class NewCockailScreen extends React.Component {
 	}
 
 	/**
-	 * Automatically build as many rows for adding ingredients and measures as was requested
+	 * As ingredient and measure are entered in two separate field, they need to be mapped using the key
+	 * Only the whole array can be replaced in setState, so on the local array changes are performed
+	 * before the local copy is assigned again.
+	 * @param {*} key identifier of the selected row
+	 * @param {*} value entered ingredient
+	 */
+	saveIngredient(key, value) {
+		//find the index where the object.key is stored and modify the ingredient
+		var objIndex = this.state.ingredients.findIndex(obj => obj.key === key);
+		this.state.ingredients[objIndex].ingredient = value;
+		this.setState({
+			ingredients: this.state.ingredients,
+		});
+	}
+
+	/**
+	 * Map the measure to its ingredient by key.
+	 * @param {*} key identifier of the selected row
+	 * @param {*} value entered measure
+	 */
+	saveMeasure(key, value) {
+		//find the index where the object.key is stored and modify the measure
+		var objIndex = this.state.ingredients.findIndex(obj => obj.key === key);
+		this.state.ingredients[objIndex].measure = value;
+		this.setState({
+			ingredients: this.state.ingredients,
+		});
+	}
+
+	/**
+	 * Automatically build as many rows for adding ingredients and measures as were requested
 	 * Content is retrieved from the state.ingredients array.
 	 */
-	createIngredientRow() {
+	displayIngredientRows() {
+		//each item is prepared with a unique key, otherwise a warning is thrown
 		const rows = this.state.ingredients.map((obj, i) => {
 			return (
 				<Row key={'r' + i}>
@@ -149,27 +200,12 @@ export default class NewCockailScreen extends React.Component {
 	}
 
 	/********************************************
-	 * Operations that handle input content
+	 * Operations for submitting
 	 ********************************************/
 
-	saveIngredient(key, value) {
-		//find the index where the object.key is stored and modify the ingredient
-		var objIndex = this.state.ingredients.findIndex(obj => obj.key === key);
-		this.state.ingredients[objIndex].ingredient = value;
-		this.setState({
-			ingredients: this.state.ingredients,
-		});
-	}
-
-	saveMeasure(key, value) {
-		//find the index where the object.key is stored and modify the measure
-		var objIndex = this.state.ingredients.findIndex(obj => obj.key === key);
-		this.state.ingredients[objIndex].measure = value;
-		this.setState({
-			ingredients: this.state.ingredients,
-		});
-	}
-
+	/**
+	 * Return a boolean, if the submit button can be displayed (=true).
+	 */
 	canSubmitBeDisplayed() {
 		const { name, category, glass, instructions, ingredients } = this.state;
 		return (
@@ -183,26 +219,51 @@ export default class NewCockailScreen extends React.Component {
 		);
 	}
 
+	submitNewCocktail() {
+		var imageURI = this.state.drinkThumb.length > 0 ? this.state.drinkThumb : Images.cubeUnmarked;
+		var alcoholic = this.state.alcoholic ? 'Alcoholic' : 'Non alcoholic';
+		dateModified = new Date().toString();
+
+		//use unknown dice image for unknown URI!
+		let cocktail = {
+			name: this.state.name,
+			category: this.state.category,
+			glass: this.state.glass,
+			alcoholic: alcoholic,
+			drinkThumb: imageURI,
+			ingredients: this.state.ingredients,
+			instructions: this.state.instructions,
+			rating: 0,
+			dateModified: dateModified,
+		};
+
+		console.log('Cocktail to be created' + JSON.stringify(cocktail));
+
+		var success = insertNewCocktail('js', cocktail);
+		if (success) {
+			alert('Cocktail has been added successfully!');
+			this.resetStateToDefaults();
+		} else {
+			alert('Something went wrong, please try again');
+		}
+	}
+
 	/**
 	 * Example Cocktail object
 	 * {
-	 * key: 0,
 	 * name: "'57 Chevy with a White License Plate",
 	 * category: "Cocktail",
 	 * glass: "Highball glass",
 	 * dateModified: "2016-07-18 22:49:04",
-	 * idDrink: 14029,
 	 * alcoholic: "Alcoholic",
 	 * drinkThumb:
 	 *   "http://www.thecocktaildb.com/images/media/drink/qyyvtu1468878544.jpg",
-	 * iba: "",
 	 * ingredients: [
 	 *   { ingredient: "Creme de Cacao", measure: "1 oz white" },
 	 *   { ingredient: "Vodka", measure: "1 oz" }
 	 * ],
 	 * instructions:
 	 *   "1. Fill a rocks glass with ice 2.add white creme de cacao and vodka 3.stir",
-	 * video: "",
 	 * rating: 5
 	 * },
 	 *
@@ -210,7 +271,6 @@ export default class NewCockailScreen extends React.Component {
 
 	render() {
 		console.log('items in state: ' + JSON.stringify(this.state));
-
 		let isSubmitEnabled = this.canSubmitBeDisplayed();
 
 		if (this.state.loading === false) {
@@ -342,7 +402,7 @@ export default class NewCockailScreen extends React.Component {
 														</Right>
 													</Col>
 												</Row>
-												{this.createIngredientRow()}
+												{this.displayIngredientRows()}
 											</Grid>
 											<Textarea
 												rowSpan={3}
@@ -357,6 +417,7 @@ export default class NewCockailScreen extends React.Component {
 											full
 											style={{ marginTop: 10 }}
 											disabled={!isSubmitEnabled}
+											onPress={() => this.submitNewCocktail()}
 										>
 											<Icon name="md-checkmark-circle" />
 											<Text>Save Cocktail</Text>
