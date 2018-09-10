@@ -200,4 +200,32 @@ export const getFavDrinks = (dbSelector = 'js', limit = 150) => {
 	}
 };
 
+/**
+ * Return a list of all categories in alphabetic order
+ */
+export const getCategories = () => {
+	return [...new Set(allDrinks.map(item => item.category))].sort();
+};
+
+/**
+ * Return a list of all glass types in alphabetic order
+ */
+export const getGlasses = () => {
+	return [...new Set(allDrinks.map(item => item.glass))].sort();
+};
+
+export const insertNewCocktail = (dbSelector = 'js', cocktail) => {
+	switch (dbSelector) {
+		case 'js':
+			var oldArrayLength = allDrinks.length;
+			var newArrayLength = allDrinks.push(cocktail);
+			return newArrayLength > oldArrayLength;
+		case 'sql':
+			//TODO: Implement sql_getFavDrinks!
+			return js_getFavDrinks(limit);
+		default:
+			return Promise.reject('No such dbSelector: ' + dbSelector);
+	}
+};
+
 export default getDrinks;
