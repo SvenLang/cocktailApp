@@ -55,6 +55,7 @@ export default class NewCockailScreen extends React.Component {
 			loading: true,
 			allGlasses: allGlasses,
 			allCategories: allCategories,
+			loading: false,
 		});
 	}
 
