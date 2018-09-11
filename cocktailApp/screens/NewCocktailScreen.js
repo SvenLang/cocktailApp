@@ -24,6 +24,7 @@ import {
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
 import { getGlasses, getCategories, insertNewCocktail } from '../assets/drinks/DrinksInterface';
+import { CameraModal } from '../components/CameraModal';
 import Images from '@assets/images';
 
 let ingredientsArrayKey = 1;
@@ -56,6 +57,7 @@ export default class NewCockailScreen extends React.Component {
 			allGlasses: allGlasses,
 			allCategories: allCategories,
 			loading: false,
+			showCamera: false,
 		});
 	}
 
@@ -279,6 +281,11 @@ export default class NewCockailScreen extends React.Component {
 				<KeyboardAvoidingView style={{ height: '100%' }} behavior="padding">
 					<Container style={{ backgroundColor: 'rgba(230,250,250,1)' }}>
 						<Content padder>
+							<CameraModal
+								visible={this.state.showCamera}
+								onRequestClose={() => this.setState({ showCamera: false })}
+							/>
+
 							<Card
 								style={{
 									width: '95%',
@@ -295,12 +302,29 @@ export default class NewCockailScreen extends React.Component {
 													<Label>Cocktail Name</Label>
 													<Input onChangeText={value => this.setState({ name: value })} />
 												</Item>
-												<Item floatingLabel>
-													<Label>Picture</Label>
-													<Input
-														onValueChange={value => this.setState({ drinkThumb: value })}
-													/>
-												</Item>
+												<Row>
+													<Col size={4}>
+														<Item floatingLabel>
+															<Label>Picture</Label>
+															<Input
+																onValueChange={value =>
+																	this.setState({ drinkThumb: value })
+																}
+															/>
+														</Item>
+													</Col>
+													<Col size={1}>
+														<Button
+															primary
+															block
+															icon
+															onPress={() => this.setState({ showCamera: true })}
+														>
+															<Icon name="md-camera" />
+														</Button>
+													</Col>
+												</Row>
+
 												<Row>
 													<Col size={4}>
 														<Item disabled>
