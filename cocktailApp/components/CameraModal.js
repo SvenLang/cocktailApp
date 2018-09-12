@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, StyleSheet, TextInput, View, Dimensions } from 'react-native';
-import { Constants, Camera, FileSystem, Permissions, BarCodeScanner } from 'expo';
+import { Modal, StyleSheet, TextInput, View, Dimensions, CameraRoll, Vibration } from 'react-native';
+import { Constants, Camera, FileSystem, Permissions } from 'expo';
 import {
 	Container,
 	Content,
@@ -43,30 +43,36 @@ export default class CameraModal extends Component {
 	};
 
 	async componentWillMount() {
-		const { status } = await Permissions.askAsync(Permissions.CAMERA);
-		this.setState({ permissionsGranted: status === 'granted' });
-	}
-
-	componentDidMount() {
-		FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'photos').catch(e => {
-			console.log(e, 'Directory exists');
-		});
-	}
-
-	takePicture = () => {
-		if (this.camera) {
-			this.camera.takePictureAsync({ onPictureSaved: this.onPictureSaved });
+		const permissions = await Promise.all([
+			Permissions.askAsync(Permissions.CAMERA),
+			Permissions.askAsync(Permissions.CAMERA_ROLL),
+		]);
+		//If any of the permissions has not been granted, do not move on
+		if (permissions.some(({ status }) => status !== 'granted')) {
+			this.setState({ permissionsGranted: false });
+		} else {
+			this.setState({ permissionsGranted: true });
 		}
-	};
+	}
 
-	onPictureSaved = async photo => {
-		var photoSaveDir = `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`;
-		await FileSystem.moveAsync({
-			from: photo.uri,
-			to: photoSaveDir,
-		});
-		console.log('Saved photo at dir ' + photoSaveDir);
-		this.setState({ newPhotos: true, photoSaveDir: photoSaveDir });
+	takePicture = async () => {
+		if (this.camera) {
+			//take the picture
+			let photo = await this.camera.takePictureAsync();
+			//save the picture
+			var photoSaveDir = `${FileSystem.documentDirectory}photos/${Date.now()}.jpg`;
+			await FileSystem.moveAsync({
+				from: photo.uri,
+				to: photoSaveDir,
+			});
+			//show the picture in the usual preview of the images
+			CameraRoll.saveToCameraRoll(photoSaveDir, 'photo');
+			//Vibrate to indicate that a picture has been taken
+			Vibration.vibrate();
+
+			console.log('Saved photo at dir ' + photoSaveDir);
+			this.setState({ newPhoto: true, photoSaveDir: photoSaveDir });
+		}
 	};
 
 	renderNoPermissions = () => {

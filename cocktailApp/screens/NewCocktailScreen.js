@@ -36,14 +36,6 @@ export default class NewCockailScreen extends React.Component {
 		title: 'Add A New Cocktail',
 	};
 
-	async componentWillMount() {
-		await Font.loadAsync({
-			Roboto: require('native-base/Fonts/Roboto.ttf'),
-			Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-		});
-		this.setState({ loading: false });
-	}
-
 	resetStateToDefaults() {
 		this.setState({
 			name: '',
@@ -53,10 +45,8 @@ export default class NewCockailScreen extends React.Component {
 			drinkThumb: '',
 			ingredients: [{ key: 0, ingredient: '', measure: '' }],
 			instructions: '',
-			loading: true,
 			allGlasses: allGlasses,
 			allCategories: allCategories,
-			loading: false,
 			showCamera: false,
 		});
 	}
@@ -71,7 +61,6 @@ export default class NewCockailScreen extends React.Component {
 			drinkThumb: '',
 			ingredients: [{ key: 0, ingredient: '', measure: '' }],
 			instructions: '',
-			loading: true,
 			allGlasses: allGlasses,
 			allCategories: allCategories,
 			showCamera: false,
@@ -277,193 +266,187 @@ export default class NewCockailScreen extends React.Component {
 		console.log('items in state: ' + JSON.stringify(this.state));
 		let isSubmitEnabled = this.canSubmitBeDisplayed();
 
-		if (this.state.loading === false) {
-			return (
-				<KeyboardAvoidingView style={{ height: '100%' }} behavior="padding">
-					<Container style={{ backgroundColor: 'rgba(230,250,250,1)' }}>
-						<Content padder>
-							<CameraModal
-								visible={this.state.showCamera}
-								onRequestClose={() => this.setState({ showCamera: false })}
-							/>
+		return (
+			<KeyboardAvoidingView style={{ height: '100%' }} behavior="padding">
+				<Container style={{ backgroundColor: 'rgba(230,250,250,1)' }}>
+					<Content padder>
+						<CameraModal
+							visible={this.state.showCamera}
+							onRequestClose={() => this.setState({ showCamera: false })}
+						/>
 
-							<Card
-								style={{
-									width: '95%',
-									alignItems: 'center',
-									alignContent: 'center',
-									alignSelf: 'center',
-								}}
-							>
-								<CardItem>
-									<Body>
-										<Form style={{ alignSelf: 'stretch' }}>
-											<Grid>
-												<Item floatingLabel>
-													<Label>Cocktail Name</Label>
-													<Input onChangeText={value => this.setState({ name: value })} />
-												</Item>
-												<Row>
-													<Col size={4}>
-														<Item floatingLabel>
-															<Label>Picture</Label>
-															<Input
-																onValueChange={value =>
-																	this.setState({ drinkThumb: value })
-																}
-															/>
-														</Item>
-													</Col>
-													<Col size={1}>
+						<Card
+							style={{
+								width: '95%',
+								alignItems: 'center',
+								alignContent: 'center',
+								alignSelf: 'center',
+							}}
+						>
+							<CardItem>
+								<Body>
+									<Form style={{ alignSelf: 'stretch' }}>
+										<Grid>
+											<Item floatingLabel>
+												<Label>Cocktail Name</Label>
+												<Input onChangeText={value => this.setState({ name: value })} />
+											</Item>
+											<Row>
+												<Col size={4}>
+													<Item floatingLabel>
+														<Label>Picture</Label>
+														<Input
+															onValueChange={value =>
+																this.setState({ drinkThumb: value })
+															}
+														/>
+													</Item>
+												</Col>
+												<Col size={1}>
+													<Button
+														primary
+														block
+														icon
+														onPress={() => this.setState({ showCamera: true })}
+														style={{
+															alignSelf: 'flex-end',
+															height: '80%',
+															marginTop: 7,
+															marginRight: 0,
+														}}
+													>
+														<Icon name="md-camera" />
+													</Button>
+												</Col>
+											</Row>
+
+											<Row>
+												<Col size={4}>
+													<Item disabled>
+														<Input disabled placeholder="Alcoholic" />
+													</Item>
+												</Col>
+												<Col style={{ alignItems: 'flex-end', alignContent: 'center' }}>
+													<ListItem
+														onPress={() =>
+															this.setState({ alcoholic: !this.state.alcoholic })
+														}
+													>
+														<CheckBox
+															checked={this.state.alcoholic}
+															style={{
+																alignSelf: 'flex-end',
+																marginRight: 0,
+																marginLeft: 1,
+															}}
+															onPress={() =>
+																this.setState({ alcoholic: !this.state.alcoholic })
+															}
+														/>
+													</ListItem>
+												</Col>
+											</Row>
+											<Row>
+												<Col size={4}>
+													<Item disabled>
+														<Input disabled placeholder="Category: " />
+													</Item>
+												</Col>
+												<Col size={6}>
+													<Item picker>
+														<Picker
+															iosHeader="Select a category"
+															mode="dropdown"
+															style={{ width: undefined }}
+															placeholder="Select a category"
+															placeholderStyle={{ color: '#2874F0' }}
+															selectedValue={this.state.category}
+															onValueChange={value => this.setState({ category: value })}
+														>
+															<Picker.Item label="Select Category" value={null} />
+															{this.createDropdown(this.state.allCategories)}
+														</Picker>
+													</Item>
+												</Col>
+											</Row>
+											<Row>
+												<Col size={4}>
+													<Item disabled>
+														<Input disabled placeholder="Glass: " />
+													</Item>
+												</Col>
+												<Col size={6}>
+													<Item picker>
+														<Picker
+															iosHeader="Select a glass"
+															mode="dropdown"
+															style={{ width: undefined }}
+															placeholder="Select a glass"
+															placeholderStyle={{ color: '#2874F0' }}
+															selectedValue={this.state.glass}
+															onValueChange={value => this.setState({ glass: value })}
+														>
+															<Picker.Item label="Select Glass" value={null} />
+															{this.createDropdown(this.state.allGlasses)}
+														</Picker>
+													</Item>
+												</Col>
+											</Row>
+
+											<Row>
+												<Col>
+													<H2>
+														{'\n'}
+														Ingredients:
+													</H2>
+												</Col>
+												<Col>
+													<Right>
 														<Button
-															primary
-															block
-															icon
-															onPress={() => this.setState({ showCamera: true })}
+															iconLeft
+															full
 															style={{
 																alignSelf: 'flex-end',
 																height: '80%',
 																marginTop: 7,
+																marginLeft: 50,
 																marginRight: 0,
 															}}
+															onPress={() => this.addIngredientRows()}
 														>
-															<Icon name="md-camera" />
+															<Icon name="md-add" />
+															<Text>Add</Text>
 														</Button>
-													</Col>
-												</Row>
-
-												<Row>
-													<Col size={4}>
-														<Item disabled>
-															<Input disabled placeholder="Alcoholic" />
-														</Item>
-													</Col>
-													<Col style={{ alignItems: 'flex-end', alignContent: 'center' }}>
-														<ListItem
-															onPress={() =>
-																this.setState({ alcoholic: !this.state.alcoholic })
-															}
-														>
-															<CheckBox
-																checked={this.state.alcoholic}
-																style={{
-																	alignSelf: 'flex-end',
-																	marginRight: 0,
-																	marginLeft: 1,
-																}}
-																onPress={() =>
-																	this.setState({ alcoholic: !this.state.alcoholic })
-																}
-															/>
-														</ListItem>
-													</Col>
-												</Row>
-												<Row>
-													<Col size={4}>
-														<Item disabled>
-															<Input disabled placeholder="Category: " />
-														</Item>
-													</Col>
-													<Col size={6}>
-														<Item picker>
-															<Picker
-																iosHeader="Select a category"
-																mode="dropdown"
-																style={{ width: undefined }}
-																placeholder="Select a category"
-																placeholderStyle={{ color: '#2874F0' }}
-																selectedValue={this.state.category}
-																onValueChange={value =>
-																	this.setState({ category: value })
-																}
-															>
-																<Picker.Item label="Select Category" value={null} />
-																{this.createDropdown(this.state.allCategories)}
-															</Picker>
-														</Item>
-													</Col>
-												</Row>
-												<Row>
-													<Col size={4}>
-														<Item disabled>
-															<Input disabled placeholder="Glass: " />
-														</Item>
-													</Col>
-													<Col size={6}>
-														<Item picker>
-															<Picker
-																iosHeader="Select a glass"
-																mode="dropdown"
-																style={{ width: undefined }}
-																placeholder="Select a glass"
-																placeholderStyle={{ color: '#2874F0' }}
-																selectedValue={this.state.glass}
-																onValueChange={value => this.setState({ glass: value })}
-															>
-																<Picker.Item label="Select Glass" value={null} />
-																{this.createDropdown(this.state.allGlasses)}
-															</Picker>
-														</Item>
-													</Col>
-												</Row>
-
-												<Row>
-													<Col>
-														<H2>
-															{'\n'}
-															Ingredients:
-														</H2>
-													</Col>
-													<Col>
-														<Right>
-															<Button
-																iconLeft
-																full
-																style={{
-																	alignSelf: 'flex-end',
-																	height: '80%',
-																	marginTop: 7,
-																	marginLeft: 50,
-																	marginRight: 0,
-																}}
-																onPress={() => this.addIngredientRows()}
-															>
-																<Icon name="md-add" />
-																<Text>Add</Text>
-															</Button>
-														</Right>
-													</Col>
-												</Row>
-												{this.displayIngredientRows()}
-											</Grid>
-											<Textarea
-												rowSpan={3}
-												bordered
-												placeholder="Instructions"
-												onChangeText={value => this.setState({ instructions: value })}
-											/>
-										</Form>
-										<Button
-											primary
-											iconLeft
-											full
-											style={{ marginTop: 10 }}
-											disabled={!isSubmitEnabled}
-											onPress={() => this.submitNewCocktail()}
-										>
-											<Icon name="md-checkmark-circle" />
-											<Text>Save Cocktail</Text>
-										</Button>
-									</Body>
-								</CardItem>
-							</Card>
-						</Content>
-					</Container>
-				</KeyboardAvoidingView>
-			);
-		} else {
-			return <View />;
-		}
+													</Right>
+												</Col>
+											</Row>
+											{this.displayIngredientRows()}
+										</Grid>
+										<Textarea
+											rowSpan={3}
+											bordered
+											placeholder="Instructions"
+											onChangeText={value => this.setState({ instructions: value })}
+										/>
+									</Form>
+									<Button
+										primary
+										iconLeft
+										full
+										style={{ marginTop: 10 }}
+										disabled={!isSubmitEnabled}
+										onPress={() => this.submitNewCocktail()}
+									>
+										<Icon name="md-checkmark-circle" />
+										<Text>Save Cocktail</Text>
+									</Button>
+								</Body>
+							</CardItem>
+						</Card>
+					</Content>
+				</Container>
+			</KeyboardAvoidingView>
+		);
 	}
 }
 
