@@ -24,7 +24,7 @@ import {
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Font } from 'expo';
 import { getGlasses, getCategories, insertNewCocktail } from '../assets/drinks/DrinksInterface';
-import { CameraModal } from '../components/CameraModal';
+import CameraModal from '../components/CameraModal';
 import Images from '@assets/images';
 
 let ingredientsArrayKey = 1;
@@ -74,6 +74,7 @@ export default class NewCockailScreen extends React.Component {
 			loading: true,
 			allGlasses: allGlasses,
 			allCategories: allCategories,
+			showCamera: false,
 		};
 	}
 
@@ -319,6 +320,12 @@ export default class NewCockailScreen extends React.Component {
 															block
 															icon
 															onPress={() => this.setState({ showCamera: true })}
+															style={{
+																alignSelf: 'flex-end',
+																height: '80%',
+																marginTop: 7,
+																marginRight: 0,
+															}}
 														>
 															<Icon name="md-camera" />
 														</Button>
