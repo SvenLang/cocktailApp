@@ -22,7 +22,6 @@ import {
 	ListItem,
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
-import { Font } from 'expo';
 import { getGlasses, getCategories, insertNewCocktail } from '../assets/drinks/DrinksInterface';
 import CameraModal from '../components/CameraModal';
 import Images from '@assets/images';
@@ -241,6 +240,13 @@ export default class NewCockailScreen extends React.Component {
 		}
 	}
 
+	showPictureUri(uri) {
+		this.setState({
+			drinkThumb: uri,
+			showCamera: false,
+		});
+	}
+
 	/**
 	 * Example Cocktail object
 	 * {
@@ -273,6 +279,7 @@ export default class NewCockailScreen extends React.Component {
 						<CameraModal
 							visible={this.state.showCamera}
 							onRequestClose={() => this.setState({ showCamera: false })}
+							onPressDone={uri => this.showPictureUri(uri)}
 						/>
 
 						<Card
@@ -289,16 +296,18 @@ export default class NewCockailScreen extends React.Component {
 										<Grid>
 											<Item floatingLabel>
 												<Label>Cocktail Name</Label>
-												<Input onChangeText={value => this.setState({ name: value })} />
+												<Input
+													value={this.state.name}
+													onChangeText={value => this.setState({ name: value })}
+												/>
 											</Item>
 											<Row>
 												<Col size={4}>
 													<Item floatingLabel>
 														<Label>Picture</Label>
 														<Input
-															onValueChange={value =>
-																this.setState({ drinkThumb: value })
-															}
+															value={this.state.drinkThumb}
+															onChangeText={value => this.setState({ drinkThumb: value })}
 														/>
 													</Item>
 												</Col>

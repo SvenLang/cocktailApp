@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, StyleSheet, TextInput, View, Dimensions, CameraRoll, Vibration } from 'react-native';
+import { Modal, StyleSheet, TextInput, View, Dimensions, CameraRoll, Vibration, Image } from 'react-native';
 import { Constants, Camera, FileSystem, Permissions } from 'expo';
+import { Col, Row, Grid } from 'react-native-easy-grid';
+
 import {
 	Container,
 	Content,
@@ -25,21 +27,8 @@ import {
 
 export default class CameraModal extends Component {
 	state = {
-		flash: 'off',
-		zoom: 0,
-		autoFocus: 'on',
-		type: 'back',
-		whiteBalance: 'auto',
-		ratio: '16:9',
-		barcodeScanning: false,
-		faceDetecting: false,
-		newPhotos: false,
+		showPhoto: false,
 		permissionsGranted: false,
-		pictureSize: undefined,
-		pictureSizes: [],
-		pictureSizeId: 0,
-		showGallery: false,
-		showMoreOptions: false,
 	};
 
 	async componentWillMount() {
@@ -66,12 +55,17 @@ export default class CameraModal extends Component {
 				to: photoSaveDir,
 			});
 			//show the picture in the usual preview of the images
-			CameraRoll.saveToCameraRoll(photoSaveDir, 'photo');
+			await CameraRoll.saveToCameraRoll(photoSaveDir, 'photo').then(newUri => {
+				photoSaveDir = newUri;
+			});
 			//Vibrate to indicate that a picture has been taken
 			Vibration.vibrate();
 
 			console.log('Saved photo at dir ' + photoSaveDir);
-			this.setState({ newPhoto: true, photoSaveDir: photoSaveDir });
+
+			this.props.onPressDone(photoSaveDir);
+
+			//this.setState({ showPhoto: true, photoSaveDir: photoSaveDir });
 		}
 	};
 
@@ -96,15 +90,51 @@ export default class CameraModal extends Component {
 				whiteBalance={'auto'}
 				ratio={'16:9'}
 			>
-				<Button full primary icon onPress={() => this.takePicture()} style={{ marginBottom: 0, flex: 0.1 }}>
+				<Button
+					full
+					primary
+					icon
+					onPress={() => this.takePicture()}
+					style={{ marginBottom: 0, flex: 0.1, alignContent: 'center' }}
+				>
 					<Icon name="md-camera" />
 				</Button>
 			</Camera>
 		);
 	};
 
+	renderPhoto = () => {
+		console.log('Display renderPhoto');
+		var photoDir = this.state.photoSaveDir;
+		return (
+			<View style={{ height: '100%', flex: 1 }}>
+				<Content>
+					<Grid>
+						<Row size={9} style={{ backgroundColor: '#fe0' }} />
+						<Row size={1}>
+							<Col size={1}>
+								<Button full primary onPress={() => this.props.onPressDone(photoDir)}>
+									<Text>OK</Text>
+								</Button>
+							</Col>
+							<Col size={1}>
+								<Button full primary>
+									<Text>Another Photo</Text>
+								</Button>
+							</Col>
+						</Row>
+					</Grid>
+				</Content>
+			</View>
+		);
+	};
+
 	render() {
-		var content = this.state.permissionsGranted ? this.renderCamera() : this.renderNoPermissions();
+		var content = this.state.permissionsGranted
+			? this.state.showPhoto
+				? this.renderPhoto()
+				: this.renderCamera()
+			: this.renderNoPermissions();
 		return (
 			<Modal visible={this.props.visible} onRequestClose={this.props.onRequestClose}>
 				<View style={styles.container}>
@@ -120,6 +150,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 		height: '100%',
+		justifyContent: 'space-between',
 	},
 	preview: {
 		justifyContent: 'flex-end',
