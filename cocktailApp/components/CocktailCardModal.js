@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View } from 'react-native';
+import { Modal, View, ImageBackground } from 'react-native';
 import CocktailCard from './CocktailCard';
 
 export default class CocktailCardModal extends React.Component {
@@ -16,7 +16,12 @@ export default class CocktailCardModal extends React.Component {
 				animationType={'fade'}
 			>
 				<View>
-					<CocktailCard cocktailToShow={this.props.cocktailToShow} />
+					<ImageBackground
+						source={require('../assets/images/tropicalBackground.jpg')}
+						style={{ width: '100%', height: '100%' }}
+					>
+						<CocktailCard cocktailToShow={this.props.cocktailToShow} />
+					</ImageBackground>
 				</View>
 			</Modal>
 		);
