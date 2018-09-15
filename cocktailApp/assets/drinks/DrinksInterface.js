@@ -204,14 +204,28 @@ export const getFavDrinks = (dbSelector = 'js', limit = 150) => {
  * Return a list of all categories in alphabetic order
  */
 export const getCategories = () => {
-	return [...new Set(allDrinks.map(item => item.category))].sort();
+	// iterate over the array and push all categories into a set to remove duplicates
+	var categorySet = new Set(allDrinks.map(item => item.category.toUpperCase()));
+	//transform the set back into an array. Interestingly [...Set] and Array.from(Set) are not working any more
+	var categories = [];
+	categorySet.forEach(category => categories.push(category));
+
+	//return all categories in alphabetical order
+	return categories.sort();
 };
 
 /**
  * Return a list of all glass types in alphabetic order
  */
 export const getGlasses = () => {
-	return [...new Set(allDrinks.map(item => item.glass))].sort();
+	// iterate over the array and push all categories into a set to remove duplicates
+	var glassSet = new Set(allDrinks.map(item => item.glass.toUpperCase()));
+	//transform the set back into an array. Interestingly [...Set] and Array.from(Set) are not working any more
+	var glasses = [];
+	glassSet.forEach(glass => glasses.push(glass));
+
+	//return all categories in alphabetical order
+	return glasses.sort();
 };
 
 export const insertNewCocktail = (dbSelector = 'js', cocktail) => {
