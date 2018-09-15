@@ -1,9 +1,30 @@
 import Expo, { SQLite, FileSystem as FS, Asset } from 'expo';
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { Button } from 'react-native-elements';
+import { StyleSheet, View } from 'react-native';
 import CocktailCard from '../components/CocktailCard';
 import { getDrinks, getRandomDrink } from '../assets/drinks/DrinksInterface';
+import {
+	Container,
+	Content,
+	Form,
+	Input,
+	Label,
+	Item,
+	CheckBox,
+	Picker,
+	Button,
+	Icon,
+	Left,
+	Body,
+	Right,
+	Text,
+	Card,
+	CardItem,
+	H2,
+	Textarea,
+	ListItem,
+} from 'native-base';
+import { Col, Row, Grid } from 'react-native-easy-grid';
 
 //database usage example!
 // https://github.com/expo/test-suite/blob/master/tests/SQLite.js
@@ -33,8 +54,46 @@ export default class RandomCocktail extends Component {
 			});
 	}
 
-	// render what is displayed
 	render() {
+		return (
+			<View style={{ height: '100%', backgroundColor: 'rgba(230,250,250,1)' }}>
+				<Container
+					style={{
+						backgroundColor: 'rgba(230,250,250,1)',
+						alignItems: 'center',
+						alignContent: 'center',
+						marginBottom: 50,
+					}}
+				>
+					<Content padder>
+						<Grid>
+							<Row size={1}>
+								<Button
+									full
+									primary
+									style={{ alignSelf: 'stretch', width: '100%' }}
+									onPress={() => this.getRandomCocktail()}
+								>
+									<Text>New</Text>
+								</Button>
+							</Row>
+							<Row size={10}>
+								<CocktailCard
+									visible={this.state.visible}
+									cocktailToShow={this.state.selectedCocktail}
+									onRequestClose={() => this.setState({ visible: false })}
+									style={{ marginBottom: 150 }}
+								/>
+							</Row>
+						</Grid>
+					</Content>
+				</Container>
+			</View>
+		);
+	}
+
+	// render what is displayed
+	renderOld() {
 		console.log('render randomCocktail');
 		return (
 			<View>
