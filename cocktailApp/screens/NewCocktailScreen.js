@@ -435,6 +435,7 @@ export default class NewCockailScreen extends React.Component {
 											rowSpan={3}
 											bordered
 											placeholder="Instructions"
+											value={this.state.instructions}
 											onChangeText={value => this.setState({ instructions: value })}
 										/>
 									</Form>

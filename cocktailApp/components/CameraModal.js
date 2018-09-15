@@ -95,7 +95,13 @@ export default class CameraModal extends Component {
 					primary
 					icon
 					onPress={() => this.takePicture()}
-					style={{ marginBottom: 0, flex: 0.1, alignContent: 'center' }}
+					style={{
+						marginBottom: 0,
+						flex: 0.1,
+						alignContent: 'center',
+						alignItems: 'center',
+						height: '80%',
+					}}
 				>
 					<Icon name="md-camera" />
 				</Button>
@@ -103,6 +109,9 @@ export default class CameraModal extends Component {
 		);
 	};
 
+	/**
+	 * Somehow no content is displayed, so this is not shown for the moment
+	 */
 	renderPhoto = () => {
 		console.log('Display renderPhoto');
 		var photoDir = this.state.photoSaveDir;
