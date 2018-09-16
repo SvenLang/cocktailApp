@@ -94,7 +94,6 @@ export default class RandomCocktail extends Component {
 
 	// render what is displayed
 	renderOld() {
-		console.log('render randomCocktail');
 		return (
 			<View>
 				<View>

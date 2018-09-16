@@ -119,7 +119,6 @@ export default class CocktailCard extends React.Component {
   */
 
 	shareCocktail() {
-		console.log('Cocktail to be shared!');
 		Share.share({
 			title: 'Take a look a this',
 			message: JSON.stringify(this.props.cocktailToShow),
@@ -128,6 +127,7 @@ export default class CocktailCard extends React.Component {
 				console.log(result);
 			})
 			.catch(error => {
+				alert('Could not share cocktail! Error: ' + error);
 				console.log(error);
 			});
 	}
