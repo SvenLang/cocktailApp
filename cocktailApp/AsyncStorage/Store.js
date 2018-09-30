@@ -4,7 +4,7 @@ import _ from "lodash";
 
 const allDrinks_Key = "AllDrink_Items";
 
-export default class Store {
+export class Store {
   static loadAllDrinks = async () => {
     let allDrinks = null;
     try {

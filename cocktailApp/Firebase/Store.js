@@ -1,7 +1,7 @@
 import _ from "lodash";
 import Firebase from "../Firebase/Firebase";
 
-export default class Store {
+export class Store {
   static loadAllDrinks = async () => {
     firebase = new Firebase();
     let allDrinks = [];
